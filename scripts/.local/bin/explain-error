@@ -1,0 +1,93 @@
+#!/home/rdio/projects/terminal-agents/error-exp/venv/bin/python3
+import subprocess
+import os
+from dotenv import load_dotenv
+import google.generativeai as genai
+
+# Load environment variables
+load_dotenv()
+genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
+
+def run_command_and_capture_error(command: str) -> str:
+    """Run a terminal command and capture stderr to explain any errors."""
+    try:
+        # Execute command in zsh shell
+        result = subprocess.run(
+            command,
+            shell=True,
+            executable="/bin/zsh",
+            capture_output=True,
+            text=True,
+            timeout=30
+        )
+        
+        if result.returncode == 0:
+            return f"Command executed successfully.\nOutput: {result.stdout}"
+        else:
+            error_output = result.stderr if result.stderr else result.stdout
+            return f"Command failed with exit code {result.returncode}.\nError: {error_output}"
+            
+    except subprocess.TimeoutExpired:
+        return "Command timed out after 30 seconds."
+    except Exception as e:
+        return f"Error executing command: {str(e)}"
+
+def explain_terminal_error(command: str, error_output: str) -> str:
+    """Send terminal command error to Gemini Flash and return a human-readable explanation."""
+    model = genai.GenerativeModel("gemini-1.5-flash")
+    
+    prompt = f"""You are a cocky/rude terminal assistant. A user ran this command in zsh:
+
+Command: {command}
+Error: {error_output}
+
+Give a single line explanation in this format:
+"Looks like [brief issue] — try `[fix command]` instead."
+
+Be extremely concise, just one sentence."""
+
+    try:
+        response = model.generate_content(prompt)
+        return response.text
+    except Exception as e:
+        return f"Error using Gemini API: {str(e)}"
+
+def main():
+    print("🧠 Terminal Command Error Explainer Agent")
+    print("Type 'exit' or 'quit' to stop\n")
+    
+    while True:
+        try:
+            command = input("Enter terminal command: ").strip()
+            
+            if command.lower() in ("exit", "quit", "q"):
+                print("Goodbye!")
+                break
+                
+            if not command:
+                continue
+                
+            print(f"\n🔍 Running: {command}")
+            
+            # Run command and capture output
+            result = run_command_and_capture_error(command)
+            print(f"\n🚨 Result:\n{result}")
+            
+            # If command failed, explain the error
+            if "Command failed" in result or "Error executing" in result:
+                print("\n🤖 Analyzing error with Gemini Flash...")
+                explanation = explain_terminal_error(command, result)
+                print(f"\n✅ Explanation:\n{explanation}")
+            elif "successfully" in result.lower():
+                print("✅ Command executed without errors!")
+                
+            print("\n" + "="*60 + "\n")
+            
+        except KeyboardInterrupt:
+            print("\n\nGoodbye!")
+            break
+        except Exception as e:
+            print(f"Unexpected error: {e}")
+
+if __name__ == "__main__":
+    main()

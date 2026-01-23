@@ -1,0 +1,26 @@
+{
+  "logo": {
+    "type": "kitty",
+    "source": "/home/rdio/Pictures/GPVs8rA.jpeg",
+    "width": 23
+  },
+  "display": {
+    "separator": "  ",
+    "color": { "keys": "35", "title": "36" }
+  },
+  "modules": [
+    "title",
+    { "type": "separator", "string": "━━━━━━━━━━━━━━━━━━━━━" },
+    { "type": "os", "key": "󰣇 OS" },
+    { "type": "kernel", "key": "󰌽 Kernel" },
+    { "type": "uptime", "key": "󰅐 Uptime" },
+    { "type": "shell", "key": "󰆍 Shell" },
+    { "type": "de", "key": "󰧨 DE" },
+    { "type": "terminal", "key": "󰞷 Term" },
+    { "type": "cpu", "key": "󰻠 CPU" },
+    { "type": "gpu", "key": "󰍛 GPU" },
+    { "type": "memory", "key": "󰑭 RAM" },
+    { "type": "battery", "key": "󰁹 Battery" },
+    { "type": "poweradapter", "key": "󰚥 Power" }
+  ]
+}
