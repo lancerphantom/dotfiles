@@ -1,20 +1,12 @@
 # ===== Startup =====
 if [[ "$TERM_PROGRAM" != "vscode" ]]; then
-  images=(/home/rdio/Pictures/fastfetch/*(N))
-  _img="${images[RANDOM % ${#images[@]} + 1]}"
-
-  wal -n -i "$_img" -q 2>/dev/null
-
-  # snapshot colors before another terminal overwrites the shared file
-  _session_colors=$(mktemp /tmp/kitty-colors-XXXX.conf)
-  cp ~/.cache/wal/colors-kitty.conf "$_session_colors"
-  rm -f "$_session_colors"
-
+  _img="${FASTFETCH_IMAGE:-${(f)$(ls /home/rdio/Pictures/fastfetch/* | shuf -n1)}}"
   _tmp=$(mktemp /tmp/fastfetch-XXXX.jsonc)
   sed "s|\"source\":.*|\"source\": \"$_img\",|" ~/.config/fastfetch/config.jsonc > "$_tmp"
   fastfetch --config "$_tmp"
   rm -f "$_tmp"
 fi
+
 export WLR_PRIMARY_SELECTION=1
 
 # ===== Oh My Zsh =====
