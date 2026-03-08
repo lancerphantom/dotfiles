@@ -1,0 +1,27 @@
+#!/bin/bash
+source "$HOME/.config/secrets/gemini.env"
+API_KEY="$GEMINI_API_KEY"
+MODEL="gemini-2.0-flash-lite"
+MODE=$1
+CMDS=$(echo "$2" | sed 's/"/\\"/g')
+if [[ $MODE == "short" ]]; then
+  PROMPT="Fix these Linux commands. Output ONLY the corrected commands, one per line. No explanation.\n\nCommands:\n$CMDS"
+else
+  PROMPT="Fix each Linux command. For each:\nWrong: <reason>\nFix: <command>\n\nCommands:\n$CMDS"
+fi
+RESPONSE=$(curl -s "https://generativelanguage.googleapis.com/v1beta/models/$MODEL:generateContent?key=$API_KEY" \
+  -H 'Content-Type: application/json' \
+  -d "{\"contents\":[{\"parts\":[{\"text\":\"$PROMPT\"}]}]}" | jq -r '.candidates[0].content.parts[0].text')
+if [[ $MODE == "short" ]]; then
+  printf "\033[0;32m%s\033[0m\n" "$RESPONSE"
+else
+  echo "$RESPONSE" | while IFS= read -r line; do
+    if [[ $line == Wrong:* ]]; then
+      printf "\033[0;31m%s\033[0m\n" "$line"
+    elif [[ $line == Fix:* ]]; then
+      printf "\033[0;32m%s\033[0m\n" "$line"
+    else
+      echo "$line"
+    fi
+  done
+fi
