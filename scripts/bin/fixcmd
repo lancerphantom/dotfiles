@@ -1,7 +1,7 @@
 #!/bin/bash
 source "$HOME/.config/secrets/gemini.env"
 API_KEY="$GEMINI_API_KEY"
-MODEL="gemini-2.0-flash-lite"
+MODEL="gemini-3.1-flash-lite-preview"
 MODE=$1
 CMDS=$(echo "$2" | sed 's/"/\\"/g')
 if [[ $MODE == "short" ]]; then
