@@ -1,8 +1,9 @@
 {
   "logo": {
     "type": "kitty",
-    "source": "/home/rdio/Pictures/GPVs8rA.jpeg",
-    "width": 23,
+    "source": "/home/rdio/Pictures/fastfetch/GPVs8rA.jpeg",
+    "width": 23,    
+    "height": 12,
     "padding": {
       "top": 1,
       "left": 2,

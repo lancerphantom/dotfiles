@@ -1,14 +1,25 @@
 # ===== Startup =====
 if [[ "$TERM_PROGRAM" != "vscode" ]]; then
-  theme=$(ls ~/.config/fastfetch/themes/*.jsonc | shuf -n 1)
-  fastfetch --config "$theme"
+  images=(/home/rdio/Pictures/fastfetch/*(N))
+  _img="${images[RANDOM % ${#images[@]} + 1]}"
+
+  wal -n -i "$_img" -q 2>/dev/null
+
+  # snapshot colors before another terminal overwrites the shared file
+  _session_colors=$(mktemp /tmp/kitty-colors-XXXX.conf)
+  cp ~/.cache/wal/colors-kitty.conf "$_session_colors"
+  rm -f "$_session_colors"
+
+  _tmp=$(mktemp /tmp/fastfetch-XXXX.jsonc)
+  sed "s|\"source\":.*|\"source\": \"$_img\",|" ~/.config/fastfetch/config.jsonc > "$_tmp"
+  fastfetch --config "$_tmp"
+  rm -f "$_tmp"
 fi
 export WLR_PRIMARY_SELECTION=1
 
 # ===== Oh My Zsh =====
 export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="robbyrussell"
-
 plugins=(
     git
     z
@@ -23,7 +34,6 @@ plugins=(
     zsh-autosuggestions
     zsh-syntax-highlighting
 )
-
 source $ZSH/oh-my-zsh.sh
 
 # ===== History =====
@@ -43,7 +53,7 @@ export PATH="$HOME/bin:$HOME/.local/bin:$HOME/.npm-global/bin:$BUN_INSTALL/bin:$
 
 # ===== Aliases =====
 alias ll='ls -lah'
-alias update='sudo pacman -Syu'
+alias update='yay'
 alias zshconfig='nano ~/.zshrc'
 alias mood='~/.config/hypr/scripts/random-wall.sh'
 alias hyprlogout='hyprctl dispatch exit'
@@ -54,7 +64,6 @@ alias fx='fix'
 fix() {
   local n=1
   local mode="short"
-  
   for arg in "$@"; do
     if [[ $arg == "-e" ]]; then
       mode="explain"
@@ -62,7 +71,6 @@ fix() {
       n=${arg#-}
     fi
   done
-  
   local cmds=$(fc -ln -100 | grep -vE '^\s*(fx|fix|source|nano|cat|curl|grep|fixcmd)' | tail -$n)
   fixcmd "$mode" "$cmds"
 }
@@ -89,10 +97,8 @@ export NVM_DIR="$HOME/.nvm"
 export BUN_INSTALL="$HOME/.bun"
 [ -s "/home/rdio/.bun/_bun" ] && source "/home/rdio/.bun/_bun"
 
-eval "$(zoxide init --cmd cd  zsh)"
+# ===== Zoxide =====
+eval "$(zoxide init --cmd cd zsh)"
 
-# Use fd if you have it (faster)
+# ===== FZF =====
 export FZF_ALT_C_COMMAND="fd --type d --hidden --exclude .git"
-
-# OR use find if you don't have fd
-export FZF_ALT_C_COMMAND="find . -type d"
