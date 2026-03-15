@@ -15,6 +15,7 @@ KDE_CONFIGS=(
     konsolerc
     dolphinrc
     kcminputrc
+    breezerc
 )
 
 for conf in "${KDE_CONFIGS[@]}"; do
