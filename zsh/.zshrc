@@ -94,3 +94,4 @@ eval "$(zoxide init --cmd cd zsh)"
 
 # ===== FZF =====
 export FZF_ALT_C_COMMAND="fd --type d --hidden --exclude .git"
+export LC_ALL=en_US.UTF-8
