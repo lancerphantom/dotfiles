@@ -95,3 +95,7 @@ eval "$(zoxide init --cmd cd zsh)"
 # ===== FZF =====
 export FZF_ALT_C_COMMAND="fd --type d --hidden --exclude .git"
 export LC_ALL=en_US.UTF-8
+
+# Restore pywal colors on shell start
+(cat ~/.cache/wal/sequences &) 2>/dev/null
+[[ -f ~/.cache/wal/colors.sh ]] && source ~/.cache/wal/colors.sh
