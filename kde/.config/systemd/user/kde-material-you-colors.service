@@ -1,0 +1,11 @@
+[Unit]
+Description=KDE Material You Colors
+After=plasma-plasmashell.service
+
+[Service]
+ExecStart=/usr/bin/kde-material-you-colors
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

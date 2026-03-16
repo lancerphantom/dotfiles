@@ -1,29 +1,3 @@
-[PlasmaViews][Panel 2]
-alignment=132
-floating=1
-floatingApplets=0
-panelLengthMode=1
-panelOpacity=2
-panelVisibility=0
-
-[PlasmaViews][Panel 2][Defaults]
-maxLength=2520
-minLength=2520
-thickness=44
-
-[PlasmaViews][Panel 2][Horizontal2560]
-maxLength=2520
-minLength=2520
-
-[PlasmaViews][Panel 26]
-alignment=132
-floating=1
-panelLengthMode=1
-panelVisibility=0
-
-[PlasmaViews][Panel 26][Defaults]
-thickness=35
-
 [PlasmaViews][Panel 62]
 alignment=2
 floating=1

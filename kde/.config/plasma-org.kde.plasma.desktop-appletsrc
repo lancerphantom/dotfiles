@@ -5,11 +5,10 @@ RightButton;NoModifier=org.kde.contextmenu
 [ActionPlugins][1]
 RightButton;NoModifier=org.kde.contextmenu
 
-[Containments][61]
-ItemGeometries-1280x1024=
+[Containments][110]
 ItemGeometries-2560x1080=
 ItemGeometriesHorizontal=
-activityId=b6bd48ae-b958-44e5-89d0-13d28044f4f4
+activityId=e32f43b1-ff10-493e-b295-d50a175741d5
 formfactor=0
 immutability=1
 lastScreen=0
@@ -17,16 +16,19 @@ location=0
 plugin=org.kde.plasma.folder
 wallpaperplugin=org.kde.potd
 
-[Containments][61][ConfigDialog]
-DialogHeight=540
-DialogWidth=720
+[Containments][110][ConfigDialog]
+DialogHeight=630
+DialogWidth=810
 
-[Containments][61][General]
-positions={"1280x1024":["1","11","desktop:/Gemini_Generated_Image_s2dw27s2dw27s2dw.png","0","4","desktop:/ mandelvrot.png","0","2","desktop:/Grokking_Algorithms.pdf","0","3","desktop:/Generated image 1.png","0","0","desktop:/But How Do It Know - The Basic Principles of Computers for Everyone - Author (J. Clark Scott).pdf","0","1"],"2560x1080":["1","23","desktop:/cdpr2.png","0","5","desktop:/cdpr.png","0","4","desktop:/Generated Image January 15, 2026 - 11_24AM.jpeg","0","6","desktop:/errorScreenshot.png","0","1","desktop:/pictures","0","7","desktop:/New Folder","0","0","desktop:/orderReceipt.PDF","0","2","desktop:/blade-runner-2049-póster-design-v0-pxxwvkslj9ab1.jpg","0","3"]}
-sortMode=-1
+[Containments][110][Wallpaper][org.kde.color][General]
+Color=36,243,29
 
-[Containments][61][Wallpaper][org.kde.potd][General]
-Provider=simonstalenhag
+[Containments][110][Wallpaper][org.kde.image][General]
+Image=file:///home/rdio/Pictures/Wallpapers/batman-minimal-art-yellow-background-black-dc-superheroes-2560x1080-1732.jpg
+SlidePaths=/usr/share/wallpapers/
+
+[Containments][110][Wallpaper][org.kde.potd][General]
+Provider=bing
 
 [Containments][62]
 activityId=
@@ -42,7 +44,6 @@ immutability=1
 plugin=org.kde.plasma.digitalclock
 
 [Containments][62][Applets][100][Configuration]
-PreloadWeight=55
 popupHeight=450
 popupWidth=560
 
@@ -51,17 +52,24 @@ immutability=1
 plugin=org.kde.plasma.icon
 
 [Containments][62][Applets][109][Configuration]
-localPath=/home/rdio/.local/share/plasma_icons/systemsettings (2).desktop
+localPath=/home/rdio/.local/share/plasma_icons/systemsettings.desktop
 url=file:///usr/share/applications/systemsettings.desktop
+
+[Containments][62][Applets][111]
+immutability=1
+plugin=org.kde.plasma.bluetooth
+
+[Containments][62][Applets][111][Configuration]
+popupHeight=400
+popupWidth=560
 
 [Containments][62][Applets][63]
 immutability=1
 plugin=org.kde.plasma.kickoff
 
 [Containments][62][Applets][63][Configuration]
-PreloadWeight=100
-popupHeight=542
-popupWidth=715
+popupHeight=549
+popupWidth=735
 
 [Containments][62][Applets][63][Configuration][ConfigDialog]
 DialogHeight=540
@@ -100,9 +108,6 @@ wallpaperplugin=org.kde.image
 immutability=1
 plugin=org.kde.plasma.vault
 
-[Containments][62][Applets][69][Applets][70][Configuration]
-PreloadWeight=60
-
 [Containments][62][Applets][69][Applets][71]
 immutability=1
 plugin=org.kde.plasma.notifications
@@ -119,22 +124,13 @@ plugin=org.kde.plasma.manage-inputmethod
 immutability=1
 plugin=org.kde.plasma.keyboardindicator
 
-[Containments][62][Applets][69][Applets][74][Configuration]
-PreloadWeight=60
-
 [Containments][62][Applets][69][Applets][75]
 immutability=1
 plugin=org.kde.plasma.clipboard
 
-[Containments][62][Applets][69][Applets][75][Configuration]
-PreloadWeight=85
-
 [Containments][62][Applets][69][Applets][76]
 immutability=1
 plugin=org.kde.plasma.devicenotifier
-
-[Containments][62][Applets][69][Applets][76][Configuration]
-PreloadWeight=100
 
 [Containments][62][Applets][69][Applets][77]
 immutability=1
@@ -143,9 +139,6 @@ plugin=org.kde.plasma.printmanager
 [Containments][62][Applets][69][Applets][78]
 immutability=1
 plugin=org.kde.kdeconnect
-
-[Containments][62][Applets][69][Applets][78][Configuration]
-PreloadWeight=80
 
 [Containments][62][Applets][69][Applets][79]
 immutability=1
@@ -163,9 +156,6 @@ plugin=org.kde.kscreen
 immutability=1
 plugin=org.kde.plasma.volume
 
-[Containments][62][Applets][69][Applets][82][Configuration]
-PreloadWeight=100
-
 [Containments][62][Applets][69][Applets][82][Configuration][General]
 migrated=true
 
@@ -173,36 +163,21 @@ migrated=true
 immutability=1
 plugin=org.kde.plasma.battery
 
-[Containments][62][Applets][69][Applets][85][Configuration]
-PreloadWeight=0
-
 [Containments][62][Applets][69][Applets][86]
 immutability=1
 plugin=org.kde.plasma.brightness
-
-[Containments][62][Applets][69][Applets][86][Configuration]
-PreloadWeight=5
 
 [Containments][62][Applets][69][Applets][87]
 immutability=1
 plugin=org.kde.plasma.bluetooth
 
-[Containments][62][Applets][69][Applets][87][Configuration]
-PreloadWeight=100
-
 [Containments][62][Applets][69][Applets][88]
 immutability=1
 plugin=org.kde.plasma.networkmanagement
 
-[Containments][62][Applets][69][Applets][88][Configuration]
-PreloadWeight=100
-
 [Containments][62][Applets][69][Applets][98]
 immutability=1
 plugin=org.kde.plasma.mediacontroller
-
-[Containments][62][Applets][69][Applets][98][Configuration]
-PreloadWeight=0
 
 [Containments][62][Applets][69][ConfigDialog]
 DialogHeight=540
@@ -217,7 +192,6 @@ immutability=1
 plugin=org.kde.kdeconnect
 
 [Containments][62][Applets][95][Configuration]
-PreloadWeight=100
 popupHeight=400
 popupWidth=560
 
@@ -226,7 +200,6 @@ immutability=1
 plugin=org.kde.plasma.vault
 
 [Containments][62][Applets][96][Configuration]
-PreloadWeight=100
 popupHeight=400
 popupWidth=560
 
@@ -239,7 +212,7 @@ DialogHeight=78
 DialogWidth=1920
 
 [Containments][62][General]
-AppletOrder=63;68;109;96;95;69;97;100
+AppletOrder=63;68;109;96;95;69;97;100;111
 
 [Containments][83]
 activityId=
@@ -264,7 +237,7 @@ DialogWidth=720
 
 [Containments][83][Applets][91][Configuration][General]
 iconSpacing=0
-launchers=applications:kitty.desktop,applications:org.kde.dolphin.desktop,file:///var/lib/flatpak/exports/share/applications/com.brave.Browser.desktop
+launchers=applications:kitty.desktop,applications:org.kde.dolphin.desktop,applications:brave-browser.desktop
 
 [Containments][83][ConfigDialog]
 DialogHeight=78
@@ -275,4 +248,4 @@ AppletOrder=91
 
 [ScreenMapping]
 itemsOnDisabledScreens=
-screenMapping=desktop:/New Folder,0,b6bd48ae-b958-44e5-89d0-13d28044f4f4,desktop:/Secon Course,0,b6bd48ae-b958-44e5-89d0-13d28044f4f4,desktop:/orderReceipt.PDF,0,b6bd48ae-b958-44e5-89d0-13d28044f4f4,desktop:/blade-runner-2049-póster-design-v0-pxxwvkslj9ab1.jpg,0,b6bd48ae-b958-44e5-89d0-13d28044f4f4,desktop:/Generated Image January 15\\, 2026 - 11_24AM.jpeg,0,b6bd48ae-b958-44e5-89d0-13d28044f4f4,desktop:/cdpr.png,0,b6bd48ae-b958-44e5-89d0-13d28044f4f4,desktop:/cdpr2.png,0,b6bd48ae-b958-44e5-89d0-13d28044f4f4,desktop:/errorScreenshot.png,0,b6bd48ae-b958-44e5-89d0-13d28044f4f4,desktop:/pictures,0,b6bd48ae-b958-44e5-89d0-13d28044f4f4
+screenMapping=desktop:/blade-runner-2049-póster-design-v0-pxxwvkslj9ab1.jpg,0,b6bd48ae-b958-44e5-89d0-13d28044f4f4,desktop:/orderReceipt.PDF,0,b6bd48ae-b958-44e5-89d0-13d28044f4f4,desktop:/cdpr.png,0,b6bd48ae-b958-44e5-89d0-13d28044f4f4,desktop:/pictures,0,b6bd48ae-b958-44e5-89d0-13d28044f4f4,desktop:/Secon Course,0,b6bd48ae-b958-44e5-89d0-13d28044f4f4,desktop:/errorScreenshot.png,0,b6bd48ae-b958-44e5-89d0-13d28044f4f4,desktop:/New Folder,0,b6bd48ae-b958-44e5-89d0-13d28044f4f4,desktop:/cdpr2.png,0,b6bd48ae-b958-44e5-89d0-13d28044f4f4,desktop:/Generated Image January 15\\, 2026 - 11_24AM.jpeg,0,b6bd48ae-b958-44e5-89d0-13d28044f4f4

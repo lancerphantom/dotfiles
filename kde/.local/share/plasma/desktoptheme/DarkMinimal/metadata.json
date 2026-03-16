@@ -1,0 +1,10 @@
+{
+  "KPlugin": {
+    "Name": "Dark Minimal",
+    "Description": "Dark minimal with pywal integration",
+    "Id": "DarkMinimal",
+    "Version": "1.0",
+    "License": "GPL"
+  },
+  "X-Plasma-API": "5.0"
+}
