@@ -3,6 +3,7 @@ Description=KDE Material You Colors
 After=plasma-plasmashell.service
 
 [Service]
+ExecStartPre=/bin/sleep 5
 ExecStart=/usr/bin/kde-material-you-colors
 Restart=on-failure
 RestartSec=5

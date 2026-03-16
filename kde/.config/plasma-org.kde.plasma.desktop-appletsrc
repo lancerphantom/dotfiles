@@ -14,7 +14,7 @@ immutability=1
 lastScreen=0
 location=0
 plugin=org.kde.plasma.folder
-wallpaperplugin=org.kde.potd
+wallpaperplugin=org.kde.image
 
 [Containments][110][ConfigDialog]
 DialogHeight=630
@@ -248,4 +248,4 @@ AppletOrder=91
 
 [ScreenMapping]
 itemsOnDisabledScreens=
-screenMapping=desktop:/blade-runner-2049-póster-design-v0-pxxwvkslj9ab1.jpg,0,b6bd48ae-b958-44e5-89d0-13d28044f4f4,desktop:/orderReceipt.PDF,0,b6bd48ae-b958-44e5-89d0-13d28044f4f4,desktop:/cdpr.png,0,b6bd48ae-b958-44e5-89d0-13d28044f4f4,desktop:/pictures,0,b6bd48ae-b958-44e5-89d0-13d28044f4f4,desktop:/Secon Course,0,b6bd48ae-b958-44e5-89d0-13d28044f4f4,desktop:/errorScreenshot.png,0,b6bd48ae-b958-44e5-89d0-13d28044f4f4,desktop:/New Folder,0,b6bd48ae-b958-44e5-89d0-13d28044f4f4,desktop:/cdpr2.png,0,b6bd48ae-b958-44e5-89d0-13d28044f4f4,desktop:/Generated Image January 15\\, 2026 - 11_24AM.jpeg,0,b6bd48ae-b958-44e5-89d0-13d28044f4f4
+screenMapping=desktop:/Secon Course,0,b6bd48ae-b958-44e5-89d0-13d28044f4f4,desktop:/errorScreenshot.png,0,b6bd48ae-b958-44e5-89d0-13d28044f4f4,desktop:/pictures,0,b6bd48ae-b958-44e5-89d0-13d28044f4f4,desktop:/New Folder,0,b6bd48ae-b958-44e5-89d0-13d28044f4f4,desktop:/cdpr.png,0,b6bd48ae-b958-44e5-89d0-13d28044f4f4,desktop:/orderReceipt.PDF,0,b6bd48ae-b958-44e5-89d0-13d28044f4f4,desktop:/cdpr2.png,0,b6bd48ae-b958-44e5-89d0-13d28044f4f4,desktop:/Generated Image January 15\\, 2026 - 11_24AM.jpeg,0,b6bd48ae-b958-44e5-89d0-13d28044f4f4,desktop:/blade-runner-2049-póster-design-v0-pxxwvkslj9ab1.jpg,0,b6bd48ae-b958-44e5-89d0-13d28044f4f4
