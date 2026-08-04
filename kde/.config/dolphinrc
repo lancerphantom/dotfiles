@@ -1,6 +1,13 @@
+[CompactMode]
+PreviewSize=22
+
+[ExtractDialog]
+2560x1080 screen: Height=660
+2560x1080 screen: Width=1632
+
 [General]
 Version=202
-ViewPropsTimestamp=2026,3,13,13,42,49.915
+ViewPropsTimestamp=2025,3,26,12,24,37.504
 
 [KFileDialog Settings]
 Places Icons Auto-resize=false
@@ -8,3 +15,6 @@ Places Icons Static Size=22
 
 [MainWindow]
 MenuBar=Disabled
+
+[Search]
+Location=Everywhere

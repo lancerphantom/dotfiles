@@ -1,0 +1,7 @@
+[Daemon]
+LockOnResume=false
+Timeout=30
+
+[Greeter][Wallpaper][org.kde.image][General]
+Image=/usr/share/sddm/themes/sddm-astronaut-theme/Backgrounds/pixel_sakura_static.png
+PreviewImage=/usr/share/sddm/themes/sddm-astronaut-theme/Backgrounds/pixel_sakura_static.png

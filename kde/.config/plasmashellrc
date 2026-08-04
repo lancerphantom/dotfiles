@@ -5,6 +5,7 @@ floatingApplets=0
 panelLengthMode=1
 panelOpacity=2
 panelVisibility=0
+shell=org.kde.plasma.desktop
 
 [PlasmaViews][Panel 62][Defaults]
 maxLength=2160
@@ -22,6 +23,7 @@ floating=1
 panelLengthMode=1
 panelOpacity=1
 panelVisibility=0
+shell=org.kde.plasma.desktop
 
 [PlasmaViews][Panel 83][Defaults]
 maxLength=2033
