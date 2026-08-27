@@ -3,3 +3,4 @@
 	email = lancerphantom88@gmail.com
 [core]
 	editor = nano
+	pager = less -FRX
