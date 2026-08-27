@@ -1,0 +1,6 @@
+[Unit]
+Description=Organize Downloads folder
+
+[Service]
+Type=oneshot
+ExecStart=%h/dotfiles/scripts/bin/organize-downloads

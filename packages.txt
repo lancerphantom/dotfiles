@@ -95,7 +95,6 @@ linux-lts
 linux-lts-headers
 localsend-bin
 lutris
-mariadb
 maven
 mokutil
 mpv
@@ -135,6 +134,7 @@ pyenv
 python-pip
 python-pipx
 python-pypdf2
+python-pyqt6
 python-pywal
 qbittorrent
 qemu-desktop
@@ -146,7 +146,6 @@ qt5-quickcontrols2
 qt5-tools
 qt5ct
 reflector
-rtl88x2bu-dkms-git
 rustdesk-bin
 sane
 sane-airscan
@@ -180,6 +179,8 @@ virtualbox
 virtualbox-guest-iso
 virtualbox-host-dkms
 visual-studio-code-bin
+vlc
+vlc-plugins-all
 vulkan-headers
 vulkan-validation-layers
 w3m
