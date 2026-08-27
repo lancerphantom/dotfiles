@@ -1,0 +1,10 @@
+[Unit]
+Description=Rotate Plymouth Theme
+Before=shutdown.target reboot.target halt.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/plymouth-theme-rotate
+
+[Install]
+WantedBy=shutdown.target reboot.target halt.target

@@ -1,0 +1,45 @@
+UNIT FILE                          STATE   PRESET
+avahi-daemon.service               enabled disabled
+bluetooth.service                  enabled disabled
+dbus-broker.service                enabled disabled
+getty@.service                     enabled enabled
+libvirtd.service                   enabled disabled
+lm_sensors.service                 enabled disabled
+NetworkManager-dispatcher.service  enabled disabled
+NetworkManager-wait-online.service enabled disabled
+NetworkManager.service             enabled disabled
+nvidia-hibernate.service           enabled disabled
+nvidia-resume.service              enabled disabled
+nvidia-suspend.service             enabled disabled
+ollama.service                     enabled disabled
+plymouth-theme-rotate-boot.service enabled disabled
+sddm-theme-cycle.service           enabled disabled
+sddm.service                       enabled disabled
+systemd-resolved.service           enabled enabled
+systemd-timesyncd.service          enabled enabled
+tailscaled.service                 enabled disabled
+waydroid-container.service         enabled disabled
+wpa_supplicant.service             enabled disabled
+avahi-daemon.socket                enabled disabled
+cups.socket                        enabled disabled
+libvirtd-admin.socket              enabled disabled
+libvirtd-ro.socket                 enabled disabled
+libvirtd.socket                    enabled disabled
+systemd-resolved-monitor.socket    enabled disabled
+systemd-resolved-varlink.socket    enabled disabled
+systemd-userdbd.socket             enabled enabled
+virtlockd-admin.socket             enabled disabled
+virtlockd.socket                   enabled disabled
+virtlogd-admin.socket              enabled disabled
+virtlogd.socket                    enabled disabled
+hibernate.target                   masked  disabled
+hybrid-sleep.target                masked  disabled
+remote-fs.target                   enabled enabled
+sleep.target                       masked  disabled
+suspend.target                     masked  disabled
+fstrim.timer                       enabled disabled
+paccache.timer                     enabled disabled
+sysstat-collect.timer              enabled disabled
+sysstat-summary.timer              enabled disabled
+
+42 unit files listed.

@@ -1,0 +1,12 @@
+[Unit]
+Description=Rotate Plymouth Theme (Boot)
+DefaultDependencies=no
+Before=plymouth-start.service
+After=local-fs.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/plymouth-theme-rotate
+
+[Install]
+WantedBy=sysinit.target

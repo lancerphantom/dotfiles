@@ -1,0 +1,8 @@
+/etc/conf.d/wireless-regdom.pacnew
+/etc/locale.gen.pacnew
+/etc/mkinitcpio.conf.pacnew
+/etc/mkinitcpio.d/linux.preset.pacsave
+/etc/pacman.d/mirrorlist.pacnew
+/etc/ssh/sshd_config.pacnew
+/etc/tpm2-tss/fapi-profiles/P_ECCP384SHA384.json.pacnew
+/etc/tpm2-tss/fapi-profiles/P_RSA3072SHA384.json.pacnew
