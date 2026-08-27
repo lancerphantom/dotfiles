@@ -193,3 +193,5 @@ subs-stop() {
 subs-clear() {
   printf '\033[H\033[2J\033[3J'
 }
+export EDITOR=nano
+export VISUAL=nano
