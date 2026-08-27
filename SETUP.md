@@ -247,3 +247,13 @@ a fresh machine.
 
 Resolve by running both forms against one image and diffing
 `~/.cache/wal/image-colors/`, then correct whichever document is wrong.
+
+## Secure Boot key backup
+
+`/var/lib/sbctl/` archived and GPG symmetric-encrypted (AES256). Not in this
+repo. Without it you cannot sign anything, and re-enrolling requires putting
+the firmware back into Setup Mode.
+
+- Location: Google Drive
+- Passphrase: <where you recorded it — not the passphrase itself>
+- Verified by round-trip download: 2026-08-27
