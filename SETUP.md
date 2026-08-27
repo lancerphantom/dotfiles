@@ -87,40 +87,54 @@ directory any time a device stops being detected for no reason.
 
 ## Secure Boot
 
-Custom keys live in `/etc/secureboot/keys/` — PK, KEK and db, each with a
-`.key` private half.
+Managed with **sbctl**. Keys live in `/var/lib/sbctl/keys/`. Secure Boot is
+enabled, firmware is out of Setup Mode, and `Vendor Keys: microsoft` — your own
+keys are enrolled alongside Microsoft's.
 
-**The private keys are not in this repo and never will be.** The capture script
-refuses to copy them. They need their own offline backup. Without them you
-cannot sign anything, and re-enrolling means putting the firmware back into
-Setup Mode.
+**Signing is automatic.** `zz-sbctl.hook` in `/usr/share/libalpm/hooks/` re-signs
+the bootloader and kernel on every relevant pacman transaction. Nothing to
+remember during normal use.
 
-**Confirm which tooling you used.** `sbctl` keeps its keys under
-`/var/lib/sbctl/` by default, so `/etc/secureboot/keys/` suggests a manual
-`sbsigntools` setup following the Arch wiki instead. That distinction decides
-whether re-signing after an update is automatic (sbctl ships a pacman hook) or
-something you have to remember to do. Check `pacman -Qs sbctl` and
-`ls /var/lib/sbctl` before assuming.
+**Module signing does not apply here.** Signature enforcement comes from kernel
+lockdown, and lockdown is inactive on this machine
+(`/sys/kernel/security/lockdown` reads `[none]`). Unsigned DKMS modules load
+fine. If that ever changes, an unsigned nvidia module fails to load with a
+symptom identical to having the wrong driver — no display, `dkms status` showing
+a clean build.
 
-**What definitely must be signed:** the systemd-boot EFI binary and the kernel.
-An unsigned bootloader after `bootctl update` means the firmware refuses to
-boot it, and the symptom is a machine that goes straight to the boot menu or to
-Windows.
+**The keys are not in this repo and never will be.** The capture script refuses
+to copy them. They need their own offline backup. Without them you cannot sign
+anything, and re-enrolling means putting the firmware back into Setup Mode.
 
-**What may or may not need signing:** DKMS kernel modules. Module signature
-enforcement comes from kernel lockdown, not from Secure Boot directly, and
-Arch's stock kernels generally don't enable the Secure-Boot-triggered lockdown
-— so unsigned modules usually still load. Verify rather than assume:
+### On a rebuild
+
+The `--microsoft` flag is not optional on this machine:
 
 ```bash
-dmesg | grep -i lockdown
-cat /sys/kernel/security/lockdown 2>/dev/null
+sbctl create-keys          # or restore /var/lib/sbctl from backup
+sbctl enroll-keys --microsoft
+sbctl sign-all
+sbctl verify
 ```
 
-If lockdown is inactive, the nvidia DKMS module loads unsigned and this is a
-non-issue. If it's active, an unsigned module fails to load and the symptom is
-**identical to having the wrong driver** — no display, `dkms status` showing a
-successful build. Knowing which case you're in is worth five minutes now.
+Enrolling **without** `--microsoft` removes Microsoft's certificates from db.
+Windows will no longer boot, and on some firmware the option ROMs stop
+validating too — which can leave the machine unable to POST properly and needing
+a CMOS reset. This is the single most expensive mistake available in this
+document.
+
+### Stale key set
+
+`/etc/secureboot/keys/` also exists, with its own PK/KEK/db. sbctl does not use
+that path, so it is almost certainly left over from an earlier manual
+`sbsigntools` attempt. Two key directories and no label saying which is enrolled
+is exactly the confusion you don't want mid-rebuild.
+
+Confirm which set is live, then remove the other (after backing it up):
+
+```bash
+cat /var/lib/sbctl/GUID        # compare against sbctl status Owner GUID
+```
 
 ---
 
@@ -207,15 +221,15 @@ they mean your config has diverged from upstream defaults that have since moved.
 
 ## Confirmed
 
+- **sshd is `disabled`** — which is also Arch's default. Nothing was deliberately
+  turned off, so there is nothing here to restore.
+
 - **`vhost_vsock`** — confirmed by `/etc/modules-load.d/vhost_vsock.conf`. The
   module is loaded at boot deliberately. If the virtiofsd symlink
   (`/usr/lib` → `/usr/bin`) is also part of this, add the detail here.
 
 ## Still to confirm
 
-- [ ] **sshd** — `systemctl is-enabled sshd`. Arch doesn't enable it on install,
-      so if it was never turned on there's no decision here to preserve.
-      `sshd_config.pacnew` exists, so openssh is at least installed.
 - [ ] **ESP rebuild from live USB** — if this happened, write the recovery steps
       down while they're still recallable.
 - [ ] **MariaDB** — `/etc/my.cnf.d/server.cnf` doesn't exist on this machine, so
