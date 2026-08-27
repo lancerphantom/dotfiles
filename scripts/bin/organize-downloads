@@ -48,7 +48,7 @@ declare -A EXT_MAP=(
     ["mp4"]="videos"   ["mkv"]="videos"   ["avi"]="videos"
     ["mov"]="videos"   ["webm"]="videos"  ["flv"]="videos"
     ["mp3"]="music"    ["flac"]="music"   ["wav"]="music"
-    ["ogg"]="music"    ["aac"]="music"
+    ["ogg"]="music"    ["aac"]="music"   ["m4a"]="music"
     ["pdf"]="pdfs"
     ["doc"]="office"   ["docx"]="office"  ["xls"]="office"
     ["xlsx"]="office"  ["ppt"]="office"   ["pptx"]="office"
