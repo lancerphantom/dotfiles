@@ -195,3 +195,18 @@ subs-clear() {
 }
 export EDITOR=nano
 export VISUAL=nano
+
+
+# RGB flash when long commands finish (green ok / red fail)
+zmodload zsh/datetime
+autoload -Uz add-zsh-hook
+_rgb_start() { _rgb_t=$EPOCHSECONDS }
+_rgb_done() {
+  local s=$?
+  if [[ -n $_rgb_t ]] && (( EPOCHSECONDS - _rgb_t >= 15 )); then
+    if (( s == 0 )); then rgb-flash 00FF00 2 &!; else rgb-flash FF0000 2 &!; fi
+  fi
+  unset _rgb_t
+}
+add-zsh-hook preexec _rgb_start
+add-zsh-hook precmd _rgb_done

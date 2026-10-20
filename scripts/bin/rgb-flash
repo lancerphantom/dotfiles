@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# rgb-flash COLOR [TIMES] — flash, then restore the saved colour
+c="${1:-FF0000}"; n="${2:-3}"
+saved=$(cat ~/.cache/rgb-current 2>/dev/null || echo 00AAFF)
+for ((i=0; i<n; i++)); do
+  rgb "$c" --temp; sleep 0.4
+  rgb 000000 --temp; sleep 0.3
+done
+[[ "$3" != "--no-restore" ]] && rgb "$saved" --temp

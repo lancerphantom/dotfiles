@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# rgb COLOR [--temp] — set all devices
+#   fans: channel reorder (calibration quirk) | keyboard: white balance (weak red LEDs)
+KB_WB="1.0 0.565 0.439"   # R G B scale — FF9070 looked neutral white
+
+c="${1:-000000}"; r=${c:0:2}; g=${c:2:2}; b=${c:4:2}
+kb="$c"
+if [[ "$2" == "--temp" ]]; then
+  [[ "$c" == "$(cat ~/.cache/rgb-current 2>/dev/null)" && -f ~/.cache/rgb-kbd ]] && kb=$(cat ~/.cache/rgb-kbd)
+else
+  rm -f ~/.cache/rgb-kbd
+  echo "$c" > ~/.cache/rgb-current
+fi
+
+kb=$(echo "$kb" | tr , '\n' | awk -v wb="$KB_WB" 'BEGIN{split(wb,s," ")}
+  { printf "%02X%02X%02X\n", strtonum("0x" substr($0,1,2))*s[1], strtonum("0x" substr($0,3,2))*s[2], strtonum("0x" substr($0,5,2))*s[3] }' | paste -sd,)
+
+openrgb -d 0 --mode "Color Shift" --color "$c,$c" \
+        -d 1 --mode direct --color "$b$r$g" \
+        -d 2 --mode direct --color "$c" \
+        -d 3 --mode direct --color "$kb" >/dev/null 2>&1

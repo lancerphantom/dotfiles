@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+# rgb-wallpaper — RGB follows KDE Picture of the Day; keyboard gets a gradient
+export PATH="$HOME/bin:$PATH"
+POTD=~/.cache/plasma_engine_potd
+ZONES=10
+MODE=palette    # palette = distinct colours sorted by hue | strips = left→right image strips
+REVERSE=0
+last=""
+
+pick() {
+  magick "$1" -resize 200x200 -colors 8 -format %c histogram:info:- |
+  awk '{ n=$1+0; for(i=1;i<=NF;i++) if($i ~ /^#[0-9A-Fa-f]{6}/) h=substr($i,2,6)
+         r=strtonum("0x" substr(h,1,2)); g=strtonum("0x" substr(h,3,2)); b=strtonum("0x" substr(h,5,2))
+         mx=r; if(g>mx)mx=g; if(b>mx)mx=b; mn=r; if(g<mn)mn=g; if(b<mn)mn=b
+         s=n*(mx-mn); if(s>best && mx>0){best=s; f=255/mx; out=sprintf("%02X%02X%02X", r*f, g*f, b*f)} }
+       END { print out }'
+}
+
+# brighten each colour to full and join with commas
+boost() {
+  awk '{ r=strtonum("0x" substr($0,1,2))/255; g=strtonum("0x" substr($0,3,2))/255; b=strtonum("0x" substr($0,5,2))/255
+         mx=r; if(g>mx)mx=g; if(b>mx)mx=b; mn=r; if(g<mn)mn=g; if(b<mn)mn=b; d=mx-mn; h=0
+         if(d>0){ if(mx==r)h=(g-b)/d; else if(mx==g)h=2+(b-r)/d; else h=4+(r-g)/d; h*=60; if(h<0)h+=360 }
+         s=(mx>0)?d/mx:0
+         if(s>0.15){ s*=2.5; if(s<0.8)s=0.8; if(s>1)s=1 }
+         c=s; hp=h/60; t=hp-2*int(hp/2); x=c*(1-((t<1)?1-t:t-1)); m=1-c
+         if(hp<1){R=c;G=x;B=0} else if(hp<2){R=x;G=c;B=0} else if(hp<3){R=0;G=c;B=x}
+         else if(hp<4){R=0;G=x;B=c} else if(hp<5){R=x;G=0;B=c} else {R=c;G=0;B=x}
+         printf "%02X%02X%02X\n", ((R+m)^2.2)*255, ((G+m)^2.2)*255, ((B+m)^2.2)*255 }' | paste -sd,
+}
+
+strips() {
+  magick "$1" -resize "${ZONES}x1!" -auto-level -modulate 100,220 -depth 8 txt:- |
+  grep -o '#[0-9A-Fa-f]\{6\}' | tr -d '#'
+}
+
+palette() {
+  magick "$1" -resize 160x90! -modulate 100,160 -colors "$ZONES" -depth 8 txt:- |
+  awk -F'[,: ]+' 'NR>1 { if (match($0,/#[0-9A-Fa-f]{6}/)) { h=substr($0,RSTART+1,6); sx[h]+=$1; n[h]++ } }
+       END { for (h in n) printf "%08.3f %s\n", sx[h]/n[h], h }' | sort -n | cut -d" " -f2
+}
+
+gradient() {
+  { if [[ $MODE == strips ]]; then strips "$1"; else palette "$1"; fi; } |
+  { if (( REVERSE )); then tac; else cat; fi; } |
+  awk -v z="$ZONES" '{a[NR]=$0} END{for(i=0;i<z;i++) print a[int(i*NR/z)+1]}' | boost
+}
+
+CFG=~/.config/plasma-org.kde.plasma.desktop-appletsrc
+
+current_img() {
+  if [[ $(grep -m1 '^wallpaperplugin=' "$CFG" | cut -d= -f2) == org.kde.potd ]]; then
+    ls -t "$POTD"/* 2>/dev/null | grep -viE '\.(json|txt)$' | head -1
+  else
+    local i; i=$(grep -m1 '^Image=' "$CFG" | cut -d= -f2-); echo "${i#file://}"
+  fi
+}
+
+# average saturation 0..1 — below ~0.08 the image is effectively black & white
+colourfulness() {
+  magick "$1" -resize 200x200 -colorspace HCL -channel G -separate +channel -format "%[fx:mean]" info:
+}
+
+# keyboard as white brightness levels following the image's light/dark areas
+mono_gradient() {
+  magick "$1" -resize "${ZONES}x1!" -colorspace Gray -auto-level -depth 8 txt:- |
+  grep -o '#[0-9A-Fa-f]\{6\}' | tr -d '#' |
+  awk '{ v=strtonum("0x" substr($0,1,2)); v=25+v*230/255; printf "%02X%02X%02X\n", v, v, v }' | paste -sd,
+}
+
+sleep 5
+while true; do
+  img=$(current_img)
+  sig="$img $(stat -c %Y "$img" 2>/dev/null)"
+  if [[ -f "$img" && "$sig" != "$last" ]]; then
+    if awk "BEGIN{exit !($(colourfulness "$img") < 0.05)}"; then
+      hex=FFFFFF; kb=$(mono_gradient "$img")
+    else
+      hex=$(pick "$img"); kb=$(gradient "$img")
+    fi
+    if [[ -n "$hex" ]]; then
+      rgb "$hex"
+      echo "$kb" > ~/.cache/rgb-kbd
+      rgb "$hex" --temp
+    fi
+    last="$sig"
+  fi
+  inotifywait -qq -t 600 -e close_write,moved_to,create ~/.config "$POTD" >/dev/null 2>&1
+  sleep 1
+done

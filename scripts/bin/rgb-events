@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# rgb-events — lock/unlock, sleep/resume, wifi drop → RGB
+export PATH="$HOME/bin:$PATH"
+saved() { cat ~/.cache/rgb-current 2>/dev/null || echo 00AAFF; }
+WIFI=wlp7s0f3u1
+
+dbus-monitor --session "type='signal',interface='org.freedesktop.ScreenSaver',member='ActiveChanged'" |
+while read -r l; do
+  case "$l" in
+    *"boolean true"*)  rgb 000000 --temp ;;
+    *"boolean false"*) rgb "$(saved)" --temp ;;
+  esac
+done &
+
+gdbus monitor --system --dest org.freedesktop.login1 --object-path /org/freedesktop/login1 |
+while read -r l; do
+  [[ "$l" == *"PrepareForSleep (false"* ]] && { sleep 3; rgb "$(saved)" --temp; }
+done &
+
+nmcli monitor | while read -r l; do
+  case "$l" in
+    "$WIFI: disconnected"*|"$WIFI: unavailable"*)
+      rgb-flash FF6600 3 --no-restore; rgb FF6600 --temp ;;
+    "$WIFI: connected"*)
+      rgb-flash 00FF00 1 --no-restore; rgb "$(saved)" --temp ;;
+  esac
+done &
+
+wait
