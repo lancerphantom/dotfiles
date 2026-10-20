@@ -1,0 +1,117 @@
+#!/usr/bin/env python3
+"""rgb-music — fans pulse to the bass in the album-art colour; other devices untouched."""
+import io, subprocess, time, urllib.request
+from pathlib import Path
+from openrgb import OpenRGBClient
+from openrgb.utils import RGBColor
+from PIL import Image
+
+HOME = Path.home()
+BARS, FPS = 10, 30
+GAIN, CURVE, FLOOR, DECAY = 2.0, 1.2, 0.03, 0.75   # sensitivity, contrast, min brightness, fall speed
+CAVA_CONF = HOME / ".cache/rgb-music-cava.conf"
+CAVA_CONF.write_text(f"""[general]
+bars = {BARS}
+framerate = {FPS}
+[input]
+method = pulse
+source = auto
+[smoothing]
+noise_reduction = 15
+[output]
+method = raw
+raw_target = /dev/stdout
+data_format = ascii
+ascii_max_range = 100
+bar_delimiter = 59
+frame_delimiter = 10
+""")
+
+def run(cmd):
+    try: return subprocess.run(cmd, capture_output=True, text=True, timeout=3).stdout.strip()
+    except Exception: return ""
+
+def saved_hex():
+    try: return (HOME / ".cache/rgb-current").read_text().strip() or "00AAFF"
+    except OSError: return "00AAFF"
+
+def hex2rgb(h): return tuple(int(h[i:i+2], 16) for i in (0, 2, 4))
+
+def vivid(img):
+    q = img.convert("RGB").resize((96, 96)).quantize(8)
+    pal, best, out = q.getpalette(), -1, None
+    for count, idx in q.getcolors():
+        r, g, b = pal[idx*3:idx*3+3]
+        mx, mn = max(r, g, b), min(r, g, b)
+        if count * (mx - mn) > best and mx > 0:
+            best, f = count * (mx - mn), 255 / mx
+            out = (int(r*f), int(g*f), int(b*f))
+    return out
+
+def art_colour(url):
+    try:
+        if url.startswith("file://"):
+            img = Image.open(url[7:])
+        elif url.startswith("http"):
+            with urllib.request.urlopen(url, timeout=5) as r:
+                img = Image.open(io.BytesIO(r.read()))
+        else:
+            return None
+        c = vivid(img)
+        return c if c and max(c) - min(c) > 40 else None
+    except Exception:
+        return None
+
+def player():
+    """(playing, artUrl) — prefer a playing player that provides artwork."""
+    playing, art = False, ""
+    for line in run(["playerctl", "-a", "metadata", "-f", "{{status}}|{{mpris:artUrl}}"]).splitlines():
+        status, _, url = line.partition("|")
+        if status == "Playing":
+            playing = True
+            if url and not art:
+                art = url
+    return playing, art
+
+def locked():
+    return "true" in run(["gdbus", "call", "--session", "--dest", "org.freedesktop.ScreenSaver",
+                          "--object-path", "/ScreenSaver", "--method", "org.freedesktop.ScreenSaver.GetActive"])
+
+cli = OpenRGBClient("127.0.0.1", 6742, "rgb-music")
+board = cli.devices[1]
+
+cava = subprocess.Popen(["cava", "-p", str(CAVA_CONF)], stdout=subprocess.PIPE, text=True, bufsize=1)
+active, last_check, last_art = False, 0.0, None
+base = hex2rgb(saved_hex())
+bass_s, means = 0.0, [0.5] * BARS
+
+for line in cava.stdout:
+    now = time.monotonic()
+    if now - last_check > 1:
+        last_check = now
+        playing, art = player()
+        want = playing and not locked()
+        if want and not active:
+            active, last_art = True, None
+            subprocess.run(["openrgb", "-d", "1", "--mode", "direct"],
+                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        elif not want and active:
+            active = False
+            subprocess.Popen([str(HOME / "bin/rgb"), saved_hex(), "--temp"])
+        if active and art != last_art:
+            last_art = art
+            base = art_colour(art) or hex2rgb(saved_hex())
+    if not active:
+        continue
+
+    vals = [int(x) for x in line.strip().strip(";").split(";") if x.isdigit()]
+    if len(vals) != BARS:
+        continue
+    x = [v / 100 for v in vals]
+    means = [m * 0.97 + xi * 0.03 for m, xi in zip(means, x)]
+    lv = [min(1.0, max(0.0, (xi - m) / max(0.15, 1 - m)) * GAIN) ** CURVE for xi, m in zip(x, means)]
+    bass_s = max(max(lv[0], lv[1]), bass_s * DECAY)
+
+    r, g, b = base
+    k = FLOOR + (1 - FLOOR) * bass_s
+    board.set_color(RGBColor(int(b*k), int(r*k), int(g*k)), fast=True)   # fans: channel reorder
