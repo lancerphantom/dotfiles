@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# effect name<TAB>description, for menus
+for f in ~/.config/rgb-fx/[^_]*.py; do
+  printf '%s\t%s\n' "$(basename "$f" .py)" "$(grep -m1 '^DESCRIPTION' "$f" | cut -d'"' -f2)"
+done

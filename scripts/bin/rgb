@@ -1,21 +1,100 @@
 #!/usr/bin/env bash
-# rgb COLOR [--temp] — set all devices
-#   fans: channel reorder (calibration quirk) | keyboard: white balance (weak red LEDs)
-KB_WB="1.0 0.565 0.439"   # R G B scale — FF9070 looked neutral white
+# rgb [COLOUR|HEX] [BRIGHTNESS%] [SATURATION%] [--temp] [--dev fans,kb,mouse,ram]
+#   rgb pink 40              all devices
+#   rgb red --dev kb,mouse   only those devices (remembered)   |  rgb reset  = clear per-device colours
+#   fans: channel reorder | keyboard: white balance | RAM: ramfx effect if set
+KB_WB="1.0 0.565 0.439"
+OV=~/.cache/rgb-devcolours
+declare -A C=(
+  [red]=FF0000 [orange]=FF5500 [amber]=FFAA00 [yellow]=FFFF00 [lime]=AAFF00
+  [green]=00FF00 [mint]=00FF88 [teal]=00FFCC [cyan]=00FFFF [sky]=00AAFF
+  [blue]=0000FF [indigo]=4400FF [purple]=8800FF [violet]=CC00FF [magenta]=FF00FF
+  [pink]=FF00AA [rose]=FF0055 [white]=FFFFFF [warm]=FFAA66 [off]=000000 [black]=000000
+)
+saved() { cat ~/.cache/rgb-current 2>/dev/null || echo 00AAFF; }
 
-c="${1:-000000}"; r=${c:0:2}; g=${c:2:2}; b=${c:4:2}
+temp=0; col=""; nums=(); devs=""
+while (( $# )); do
+  case $1 in
+    --temp) temp=1 ;;
+    --dev)  devs=$2; shift ;;
+    *) if [[ $1 =~ ^[0-9]{1,3}$ ]]; then nums+=("$1"); else col=$1; fi ;;
+  esac; shift
+done
+col=${col:-off}
+
+case ${col,,} in
+  list) for k in $(printf '%s\n' "${!C[@]}" | sort); do printf "%-8s %s\n" "$k" "${C[$k]}"; done; exit 0 ;;
+  reset) rm -f "$OV"; exec "$0" "$(saved)" --temp ;;
+esac
+
+hex=${C[${col,,}]:-$col}
+[[ $hex =~ ^[0-9A-Fa-f]{6}$ ]] || { echo "rgb: unknown colour '$col' — try: rgb list" >&2; exit 1; }
+cc=$(awk -v h="${hex^^}" -v B="${nums[0]:-100}" -v S="${nums[1]:-100}" 'BEGIN{
+  r=strtonum("0x" substr(h,1,2)); g=strtonum("0x" substr(h,3,2)); b=strtonum("0x" substr(h,5,2))
+  mx=r; if(g>mx)mx=g; if(b>mx)mx=b
+  r=mx-(mx-r)*S/100; g=mx-(mx-g)*S/100; b=mx-(mx-b)*S/100
+  f=B/100; printf "%02X%02X%02X", r*f, g*f, b*f }')
+
+# per-device overrides
+declare -A ov
+[[ -s $OV ]] && while IFS== read -r d v; do [[ -n $d ]] && ov[$d]=$v; done < "$OV"
+if [[ -n $devs ]]; then
+  for d in ${devs//,/ }; do [[ $d == all ]] && { ov=(); continue; }; ov[$d]=$cc; done
+  (( temp )) || { : > "$OV"; for d in "${!ov[@]}"; do echo "$d=${ov[$d]}" >> "$OV"; done; }
+  c=$(saved); temp=1                               # everything else keeps the current colour
+else
+  c=$cc
+fi
+
 kb="$c"
-if [[ "$2" == "--temp" ]]; then
-  [[ "$c" == "$(cat ~/.cache/rgb-current 2>/dev/null)" && -f ~/.cache/rgb-kbd ]] && kb=$(cat ~/.cache/rgb-kbd)
+if (( temp )); then
+  [[ "$c" == "$(saved)" && -f ~/.cache/rgb-kbd ]] && kb=$(cat ~/.cache/rgb-kbd)
 else
   rm -f ~/.cache/rgb-kbd
   echo "$c" > ~/.cache/rgb-current
 fi
 
+fan=$c; mouse=$c; ram=$c
+if [[ $c != 000000 ]]; then                        # going dark (lock/off) ignores overrides
+  [[ -n ${ov[fans]} ]]  && fan=${ov[fans]}
+  [[ -n ${ov[kb]} ]]    && kb=${ov[kb]}
+  [[ -n ${ov[mouse]} ]] && mouse=${ov[mouse]}
+  [[ -n ${ov[ram]} ]]   && ram=${ov[ram]}
+fi
+
+kbraw=$kb
 kb=$(echo "$kb" | tr , '\n' | awk -v wb="$KB_WB" 'BEGIN{split(wb,s," ")}
   { printf "%02X%02X%02X\n", strtonum("0x" substr($0,1,2))*s[1], strtonum("0x" substr($0,3,2))*s[2], strtonum("0x" substr($0,5,2))*s[3] }' | paste -sd,)
 
-openrgb -d 0 --mode "Color Shift" --color "$c,$c" \
-        -d 1 --mode direct --color "$b$r$g" \
-        -d 2 --mode direct --color "$c" \
+ramargs=(--mode "Color Shift" --color "$ram,$ram")
+if [[ $c != 000000 && -z ${ov[ram]} && -s ~/.cache/rgb-ram ]]; then
+  { read -r rmode; read -r rcol; } < ~/.cache/rgb-ram
+  ramargs=(--mode "$rmode"); [[ -n $rcol ]] && ramargs+=(--color "$rcol")
+fi
+
+openrgb -d 0 "${ramargs[@]}" \
+        -d 1 --mode direct --color "${fan:4:2}${fan:0:2}${fan:2:2}" \
         -d 3 --mode direct --color "$kb" >/dev/null 2>&1
+
+# mouse: 5 arc zones + logo (wallpaper gradient across the arc when there is one)
+if [[ -z ${ov[mouse]} && $kbraw == *,* && $c != 000000 ]]; then
+  IFS=, read -ra g <<<"$kbraw"; n=${#g[@]}
+  mz="${g[0]} ${g[$((n/4))]} ${g[$((n/2))]} ${g[$((3*n/4))]} ${g[$((n-1))]} $mouse"
+else
+  mz=$mouse
+fi
+mousefx zones $mz >/dev/null 2>&1
+
+# WiZ bulb — follows chosen all-device colours only
+BULB=$(cat ~/.config/rgb-fx/bulb.conf 2>/dev/null)
+if [[ -n $BULB && ! -f ~/.cache/rgb-bulb-off && -z $devs ]] && (( ! temp )); then
+  R=$((16#${c:0:2})) G=$((16#${c:2:2})) B=$((16#${c:4:2}))
+  M=$(( R>G ? (R>B?R:B) : (G>B?G:B) ))
+  D=$(( M*100/255 )); (( D < 10 )) && D=10
+  if (( M == 0 )); then j='{"method":"setPilot","params":{"state":false}}'
+  elif (( R == G && G == B )); then j=$(printf '{"method":"setPilot","params":{"state":true,"temp":4000,"dimming":%d}}' $D)
+  else j=$(printf '{"method":"setPilot","params":{"state":true,"r":%d,"g":%d,"b":%d,"dimming":%d}}' $((R*255/M)) $((G*255/M)) $((B*255/M)) $D); fi
+  printf '%s' "$j" > /dev/udp/$BULB/38899 2>/dev/null
+fi
+exit 0

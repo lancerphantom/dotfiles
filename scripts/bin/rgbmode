@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+# rgbmode auto|wallpaper|static [COLOUR …]|off|music-on|music-off|fx EFFECT [SPEED]|fx-off|fx-list|status
+OFF=~/.cache/rgb-off
+svc() { systemctl --user "$@" 2>/dev/null; }
+saved() { cat ~/.cache/rgb-current 2>/dev/null || echo 00AAFF; }
+PY=~/.local/share/rgb-music/venv/bin/python
+
+case "${1:-status}" in
+  auto)
+    rm -f "$OFF"
+    svc disable --now rgb-fanfx
+    svc enable --now rgb-events rgb-wallpaper rgb-music
+    svc restart rgb-wallpaper ;;
+  wallpaper)
+    rm -f "$OFF"
+    svc disable --now rgb-music
+    svc enable --now rgb-events rgb-wallpaper
+    svc restart rgb-wallpaper ;;
+  static)
+    rm -f "$OFF"
+    svc disable --now rgb-wallpaper rgb-music rgb-fanfx
+    svc enable --now rgb-events
+    rm -f ~/.cache/rgb-devcolours; sleep 1; if [[ -n $2 ]]; then rgb "${@:2}"; else rgb sky; fi ;;
+  off)
+    touch "$OFF"
+    svc disable --now rgb-wallpaper rgb-music rgb-fanfx rgb-events
+    sleep 1; rgb 000000 --temp ;;
+  music-on)
+    svc disable --now rgb-fanfx
+    svc enable --now rgb-music ;;
+  music-off)
+    svc disable --now rgb-music
+    sleep 1; rgb "$(saved)" --temp ;;
+  fx)
+    [[ -z $2 ]] && { $PY ~/bin/rgb-fanfx list; exit; }
+    [[ -f ~/.config/rgb-fx/$2.py ]] || { echo "no effect '$2' — try: fxlist"; exit 1; }
+    rm -f "$OFF"
+    echo "$2 ${3:-1.0} ${4:-fans,kb,mouse,ram}" > ~/.cache/rgb-fx
+    svc disable --now rgb-music
+    svc enable rgb-fanfx
+    svc restart rgb-fanfx ;;
+  fx-off)
+    svc disable --now rgb-fanfx
+    sleep 1; rgb "$(saved)" --temp ;;
+  fx-list)
+    $PY ~/bin/rgb-fanfx list ;;
+  status)
+    for s in rgb-events rgb-wallpaper rgb-music rgb-fanfx; do
+      printf "%-14s %s\n" "$s" "$(svc is-active $s)"
+    done
+    [[ $(svc is-active rgb-fanfx) == active ]] && echo "fan effect: $(cat ~/.cache/rgb-fx)"
+    [[ -f "$OFF" ]] && echo "mode: off" || echo "colour: $(saved)" ;;
+  *) echo "usage: rgbmode auto|wallpaper|static [COLOUR …]|off|music-on|music-off|fx EFFECT [SPEED]|fx-off|fx-list|status" ;;
+esac

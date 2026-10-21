@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# ramfx MODE [COLOURS] | off | list — RAM built-in effects (saved until "ramfx off")
+export PATH="$HOME/bin:$PATH"
+saved() { cat ~/.cache/rgb-current 2>/dev/null || echo 00AAFF; }
+case "${1:-list}" in
+  list)
+    cat <<'L'
+  Rainbow Wave                 rainbow flowing along the stick
+  Rainbow                      whole stick cycles colours
+  Color Shift  C1,C2           fades between two colours
+  Color Pulse  C1,C2           pulses between two colours
+  Color Wave   C1,C2           wave of two colours
+  Visor        C1,C2           scanner sweeping up and down
+  Rain         C1,C2           falling drops
+  Marquee      C1              running lights
+  Sequential   C1              colour filling up the stick
+  e.g.  ramfx "Rainbow Wave"     ramfx Visor FF0000,0000FF     ramfx off
+L
+    exit ;;
+  off) rm -f ~/.cache/rgb-ram ;;
+  *)
+    out=$(openrgb -d 0 --mode "$1" ${2:+--color "$2"} 2>&1)
+    if grep -qiE 'error|wrong|not available' <<<"$out"; then echo "$out"; exit 1; fi
+    printf '%s\n%s\n' "$1" "${2:-}" > ~/.cache/rgb-ram ;;
+esac
+rgb "$(saved)" --temp
