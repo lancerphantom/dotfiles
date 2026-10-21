@@ -3,6 +3,7 @@
 export PATH="$HOME/bin:$PATH"
 saved() { cat ~/.cache/rgb-current 2>/dev/null || echo 00AAFF; }
 WIFI=wlp7s0f3u1
+(sleep 5; [[ -f ~/.cache/rgb-off ]] || rgb "$(saved)" --temp) &
 
 dbus-monitor --session "type='signal',interface='org.freedesktop.ScreenSaver',member='ActiveChanged'" |
 while read -r l; do
