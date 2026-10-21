@@ -31,7 +31,7 @@ class Mouse:
         fcntl.ioctl(self.fd, (3 << 30) | (len(p) << 16) | (ord('H') << 8) | 0x06, bytes(p))
 
     def slot(self, s, rgb, force=False):
-        R, G, B = (0xF - int(max(0, min(255, c))) // 16 for c in rgb)
+        R, G, B = (0xF - min(15, (int(max(0, min(255, c))) + 8) // 16) for c in rgb)
         key = (R, G, B)
         if not force and self.cache.get(s) == key:
             return

@@ -56,11 +56,12 @@ def locked():
 def clamp(px):
     return tuple(int(max(0, min(255, c))) for c in px)
 
-cli = OpenRGBClient("127.0.0.1", 6742, "rgb-fanfx")
 mode_cmd = ["openrgb"]
 for t in targets:
     if t not in ("ram", "mouse"): mode_cmd += ["-d", str(DEV[t]), "--mode", "direct"]
 if len(mode_cmd) > 1: subprocess.run(mode_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+time.sleep(0.5)                                    # let the server settle after the mode switch
+cli = OpenRGBClient("127.0.0.1", 6742, "rgb-fanfx")
 dev = {t: cli.devices[DEV[t]] for t in targets if t != "mouse"}
 mouse = None
 if "mouse" in targets:
@@ -82,6 +83,9 @@ fx, mtime = load(name), path.stat().st_mtime
 ram_t = 0.0
 t0, last_check, paused, base = time.monotonic(), 0.0, False, saved()
 
+def dly(d):
+    return getattr(fx, "DELAYS", {}).get(d, 0.0)
+
 while True:
     now = time.monotonic()
     if dur and now - t0 > dur:
@@ -98,19 +102,19 @@ while True:
     t = (now - t0) * speed
     try:
         if "fans" in dev:
-            ring = [clamp(p) for p in fx.frame(t, base, FAN_LEDS)]
+            ring = [clamp(p) for p in fx.frame(t - dly("fans"), base, FAN_LEDS)]
             cols = [RGBColor(b, r, g) for r, g, b in ring]                      # fan channel reorder
             dev["fans"].set_colors(cols + [RGBColor(0, 0, 0)] * (len(dev["fans"].leds) - len(cols)), fast=True)
         if "kb" in dev:
             n = len(dev["kb"].leds)
-            zones = [clamp(p) for p in fx.frame(t, base, n)]
+            zones = [clamp(p) for p in fx.frame(t - dly("keyboard"), base, n)]
             dev["kb"].set_colors([RGBColor(*(int(c * w) for c, w in zip(p, KB_WB))) for p in zones], fast=True)
         if "ram" in dev and now - ram_t >= 1 / RAM_FPS:
             ram_t = now
-            dev["ram"].set_colors([RGBColor(*clamp(p)) for p in fx.frame(t, base, len(dev["ram"].leds))], fast=True)
+            dev["ram"].set_colors([RGBColor(*clamp(p)) for p in fx.frame(t - dly("ram"), base, len(dev["ram"].leds))], fast=True)
         if mouse:
-            arc = [clamp(p) for p in fx.frame(t, base, 5)]
-            mouse.zones(arc + [clamp(fx.frame(t, base, 1)[0])])
+            arc = [clamp(p) for p in fx.frame(t - dly("mouse"), base, 5)]
+            mouse.zones(arc + [clamp(fx.frame(t - dly("mouse"), base, 1)[0])])
     except Exception as ex:
         print(f"effect error: {ex}", flush=True); time.sleep(1)
     time.sleep(1 / FPS)
