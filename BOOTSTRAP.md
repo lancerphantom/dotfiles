@@ -54,6 +54,7 @@ installs the exact package you were holding back and you won't notice.
 
 ```bash
 sudo cp ~/dotfiles/etc/pacman.conf /etc/pacman.conf
+sudo mkdir -p /home/pacman-cache       # pacman.conf sets CacheDir there
 sudo install -Dm644 -t /etc/pacman.d/hooks ~/dotfiles/etc/pacman.d/hooks/*.hook
 ```
 
@@ -275,7 +276,8 @@ they can't drift. The restore:
 - refuses to run while `plasmashell` is running;
 - refuses if the icon theme, Plasma style or Overcast Tasks widget the
   restored files name isn't there — run step 9 first;
-- warns about other missing widgets, the global theme and the cursor theme;
+- warns about other missing widgets, the global theme, the cursor theme
+  (`kcminputrc`) and an Aurorae window decoration theme;
 - backs up any live file it replaces to `~/.local/state/kde-restore/<time>/`.
 
 `--force` skips the checks if you know better.

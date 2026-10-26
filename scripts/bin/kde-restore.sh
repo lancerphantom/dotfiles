@@ -124,11 +124,23 @@ if [[ -f "$appletsrc" ]]; then
     fi
 fi
 
-if [[ -f "$SRC/.config/environment.d/cursor.conf" ]]; then
-    cursor=$(sed -n 's/^XCURSOR_THEME=//p' "$SRC/.config/environment.d/cursor.conf")
-    if [[ -n "$cursor" ]] && ! first_existing "$XDG_DATA_HOME/icons/$cursor" "$HOME/.icons/$cursor" \
-                                              "/usr/share/icons/$cursor"; then
-        warn "cursor theme '$cursor' is not installed"
+# Cursor: Plasma reads kcminputrc [Mouse] cursorTheme and exports XCURSOR_THEME
+# to the session itself.
+if [[ -f "$SRC/.config/kcminputrc" ]]; then
+    cursor=$(ini_get "$SRC/.config/kcminputrc" Mouse cursorTheme)
+    if [[ -n "$cursor" ]] && ! first_existing "$XDG_DATA_HOME/icons/$cursor/cursors" "$HOME/.icons/$cursor/cursors" \
+                                              "/usr/share/icons/$cursor/cursors"; then
+        warn "cursor theme '$cursor' (kcminputrc) is not installed — Plasma falls back to Breeze"
+    fi
+fi
+
+# Window decoration: an Aurorae theme named in kwinrc must be installed.
+if [[ -f "$SRC/.config/kwinrc" ]]; then
+    deco=$(ini_get "$SRC/.config/kwinrc" org.kde.kdecoration2 theme)
+    if [[ "$deco" == __aurorae__svg__* ]]; then
+        name="${deco#__aurorae__svg__}"
+        first_existing "$XDG_DATA_HOME/aurorae/themes/$name" "/usr/share/aurorae/themes/$name" ||
+            warn "window decoration theme '$name' (Aurorae) is not installed"
     fi
 fi
 

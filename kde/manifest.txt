@@ -14,7 +14,6 @@
 .config/kglobalshortcutsrc
 .config/kscreenlockerrc
 .config/kcminputrc
-.config/breezerc
 .config/plasmanotifyrc
 .config/konsolerc
 .config/dolphinrc
@@ -27,9 +26,6 @@
 .config/plasmarc
 .config/plasmashellrc
 .config/plasma-org.kde.plasma.desktop-appletsrc
-
-# --- Session environment ---------------------------------------------------
-.config/environment.d/cursor.conf
 
 # --- Kvantum ---------------------------------------------------------------
 # theme=Default#, i.e. Kvantum's own default.
@@ -46,5 +42,12 @@
 #                                 handled by overcast-save.sh / overcast-restore.sh.
 # Retired 2026-10-26: DarkMinimal Plasma style, KvDarkMinimal Kvantum theme,
 #                                 kde-material-you-colors (config + user unit).
+# Dropped 2026-10-26: .config/breezerc (Breeze window-decoration settings;
+#                                 the decoration is Aurorae, and the live file
+#                                 no longer exists) and
+#                                 .config/environment.d/cursor.conf (exported
+#                                 XCURSOR_THEME=Bibata-Modern-Ice, a cursor that
+#                                 isn't installed; gone from the live system;
+#                                 Plasma exports the cursor from kcminputrc).
 # Credentials (.config/gh, .config/secrets, .ssh, .gnupg, keyrings):
 #                                 refused by both scripts even if listed here.
