@@ -1,2 +1,17 @@
+[Applications][antigravity]
+Seen=true
+
+[Applications][balenaEtcher]
+Seen=true
+
+[Applications][brave-browser]
+Seen=true
+
+[Applications][com.anthropic.Claude]
+Seen=true
+
 [Applications][org.qbittorrent.qBittorrent]
+Seen=true
+
+[Applications][org.telegram.desktop._a7ff65947751c9b992e1ef01a899783c]
 Seen=true

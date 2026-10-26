@@ -1,0 +1,6 @@
+# Launcher icon overrides: <file in ~/.local/share/applications><TAB><icon name>
+# overcast-save.sh refreshes the icon for each listed file and reports other local
+# launchers that use an Overcast icon; add those here by hand if you want them kept.
+antigravity.desktop	antigravity
+bully.desktop	bully
+install4j_186b5ff-BurpSuite.desktop	burpsuite

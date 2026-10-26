@@ -210,3 +210,42 @@ _rgb_done() {
 }
 add-zsh-hook preexec _rgb_start
 add-zsh-hook precmd _rgb_done
+
+# RGB modes
+alias rgbauto='rgbmode auto'
+alias rgbwall='rgbmode wallpaper'
+alias rgbs='rgbmode static'
+alias rgboff='rgbmode off'
+alias musicon='rgbmode music-on'
+alias musicoff='rgbmode music-off'
+alias rgbstat='rgbmode status'
+alias rgbfx='rgbmode fx'
+alias fxoff='rgbmode fx-off'
+alias fxlist='rgbmode fx-list'
+
+# RGB tab completion
+_rgb_fx_list() {
+  local f; reply=()
+  for f in ~/.config/rgb-fx/[^_]*.py(N); do
+    reply+=("${f:t:r}:$(grep -m1 '^DESCRIPTION' $f | cut -d'"' -f2)")
+  done
+}
+_rgb_colours() { local -a c; c=(${(f)"$(rgb list | awk '{print $1":"$2}')"}); _describe 'colour' c; }
+_rgbmode() {
+  local -a modes fx
+  modes=('auto:wallpaper + music + events' 'wallpaper:wallpaper colours, no music'
+         'static:one fixed colour' 'off:everything dark' 'music-on:fans pulse to music'
+         'music-off:stop music sync' 'fx:fan effect' 'fx-off:stop fan effect'
+         'fx-list:list fan effects' 'status:show what is running')
+  if (( CURRENT == 2 )); then _describe 'mode' modes
+  elif (( CURRENT == 3 )); then
+    case $words[2] in
+      fx) _rgb_fx_list; fx=($reply); _describe 'effect' fx ;;
+      static) _rgb_colours ;;
+    esac
+  fi
+}
+_rgb() { (( CURRENT == 2 )) && _rgb_colours; }
+compdef _rgbmode rgbmode
+compdef _rgb rgb
+alias rgbm='rgbmenu'

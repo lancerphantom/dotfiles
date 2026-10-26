@@ -1,0 +1,50 @@
+# KDE / Plasma files that kde-save.sh copies into ~/dotfiles/kde/ and
+# kde-restore.sh copies back. One path per line, relative to $HOME.
+# A trailing "/" means a whole directory.
+#
+# Both scripts read this one list, so save and restore can't drift apart.
+# To track a new file: add it here, run kde-save.sh, commit.
+#
+# These are copies, not stow symlinks: KDE rewrites its config files
+# atomically, which replaces a symlink with a plain file.
+
+# --- Plasma, KWin, shortcuts, apps -----------------------------------------
+.config/kdeglobals
+.config/kwinrc
+.config/kglobalshortcutsrc
+.config/kscreenlockerrc
+.config/kcminputrc
+.config/breezerc
+.config/plasmanotifyrc
+.config/konsolerc
+.config/dolphinrc
+
+# --- Panels and desktop ----------------------------------------------------
+# These two describe one layout and share containment/applet IDs: always
+# save and restore them together. They depend on Overcast (icon theme,
+# Nothing-Floating style, Overcast Tasks widget); kde-restore.sh checks that
+# those exist before restoring.
+.config/plasmarc
+.config/plasmashellrc
+.config/plasma-org.kde.plasma.desktop-appletsrc
+
+# --- Session environment ---------------------------------------------------
+.config/environment.d/cursor.conf
+
+# --- Kvantum ---------------------------------------------------------------
+# theme=Default#, i.e. Kvantum's own default.
+.config/Kvantum/kvantum.kvconfig
+
+# --- Deliberately NOT tracked ----------------------------------------------
+# .config/kwinoutputconfig.json   monitor layout; specific to these screens.
+#                                 The committed copy is from 2026-08 and was
+#                                 never restored. Set displays by hand.
+# .local/share/user-places.xbel   holds device URLs (KDE Connect) and
+#                                 machine paths; overcast-restore.sh sets only
+#                                 the bookmark icons it needs.
+# Overcast units, plasma-workspace/env, .desktop and .directory icons:
+#                                 handled by overcast-save.sh / overcast-restore.sh.
+# Retired 2026-10-26: DarkMinimal Plasma style, KvDarkMinimal Kvantum theme,
+#                                 kde-material-you-colors (config + user unit).
+# Credentials (.config/gh, .config/secrets, .ssh, .gnupg, keyrings):
+#                                 refused by both scripts even if listed here.

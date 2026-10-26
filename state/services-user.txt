@@ -1,5 +1,9 @@
 UNIT FILE                      STATE   PRESET
+overcast-refresh.path          enabled enabled
 app-org.kde.krdpserver.service enabled disabled
+openrgb.service                enabled enabled
+overcast-refresh.service       enabled enabled
+overcast-tasks-check.service   enabled enabled
 pipewire-pulse.service         enabled enabled
 wireplumber.service            enabled enabled
 xdg-user-dirs.service          enabled enabled
@@ -8,4 +12,4 @@ pipewire-pulse.socket          enabled enabled
 pipewire.socket                enabled enabled
 organize-downloads.timer       enabled enabled
 
-8 unit files listed.
+12 unit files listed.

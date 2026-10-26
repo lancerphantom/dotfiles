@@ -107,7 +107,7 @@ XftSubPixel=rgb
 font=Noto Sans,12,-1,5,400,0,0,0,0,0,0,0,0,0,0,1
 
 [Icons]
-Theme=breeze-dark
+Theme=Overcast
 
 [KDE]
 LookAndFeelPackage=Nothing
@@ -127,7 +127,7 @@ Sort by=Date
 Sort directories first=true
 Sort hidden files last=false
 Sort reversed=false
-Speedbar Width=141
+Speedbar Width=151
 View Style=DetailTree
 
 [Sounds]

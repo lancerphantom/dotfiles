@@ -1,0 +1,3 @@
+# Dolphin Places bookmark icons: <folder relative to $HOME><TAB><icon name>
+# Only the icon is restored; the rest of user-places.xbel is machine-specific.
+projects	folder-development

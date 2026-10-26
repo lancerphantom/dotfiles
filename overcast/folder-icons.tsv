@@ -1,0 +1,29 @@
+# Folder icons: <folder relative to $HOME><TAB><icon name>
+# Written by overcast-save.sh from $HOME/*/.directory; applied by overcast-restore.sh.
+Android	folder-android
+AndroidStudioProjects	folder-android
+BurpSuite	folder-security
+Desktop	user-desktop
+Documents	folder-documents
+Downloads	folder-download
+FiraxisLive	folder-orange
+Games	folder-games
+KVM_Machines	folder-vm
+Music	folder-music
+Pictures	folder-pictures
+Public	folder-publicshare
+Templates	folder-templates
+Vaults	folder-encrypted
+Videos	folder-videos
+VirtualBox VMs	folder-vm
+anaconda3	folder-python
+bin	folder-script
+dotfiles	folder-script
+drivePics	folder-yellow
+go	folder-red
+obs	folder-green
+projects	folder-development
+snap	folder-orange
+snapd	folder-orange
+test-results	folder-orange
+venv	folder-python

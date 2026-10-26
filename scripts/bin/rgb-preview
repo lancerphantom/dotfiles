@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# rgb-preview CMD... — debounced live preview for the menus.
+#   Runs CMD only if no newer preview arrives within 0.35 s; returns immediately.
+#   rgb-preview --cancel   drops any pending preview (used when a menu closes)
+f=${XDG_RUNTIME_DIR:-/tmp}/rgb-preview.token
+tok=$RANDOM$RANDOM; echo "$tok" > "$f"
+[[ $1 == --cancel ]] && exit 0
+( sleep 0.25; [[ $(cat "$f" 2>/dev/null) == "$tok" ]] && "$@" ) </dev/null >/dev/null 2>&1 &
+disown

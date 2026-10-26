@@ -1,0 +1,18 @@
+# Python bytecode (rgb-fx effects, tmkb_mouse.py) — regenerated on every run
+__pycache__/
+*.py[co]
+
+# Per-machine Claude Code permissions
+.claude/settings.local.json
+
+# Temporary files from overcast-restore.sh
+*.overcast-tmp
+
+# Credentials — never commit. gh writes its token to ~/.config/gh/hosts.yml
+# in plain text when no keyring is reachable. githooks/pre-commit also
+# blocks these (enable: git config core.hooksPath githooks).
+**/.config/gh/
+**/gh/hosts.yml
+**/.config/secrets/
+**/.ssh/
+**/.gnupg/

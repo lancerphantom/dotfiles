@@ -1,59 +1,53 @@
-#!/bin/bash
-# kde-save.sh — copy live KDE configs INTO the dotfiles repo
-# Run this on sandbox after making theme changes you want to keep
-DOTFILES_KDE="$HOME/dotfiles/kde/.config"
-mkdir -p "$DOTFILES_KDE"
+#!/usr/bin/env bash
+# kde-save.sh — copy live KDE configs INTO the dotfiles repo.
+#
+# The file list is ~/dotfiles/kde/manifest.txt, shared with kde-restore.sh.
+# Run after a theme or panel change you want to keep, then review with
+#   git -C ~/dotfiles diff --stat
+#
+# Safe to run inside a live Plasma session (it only reads ~/.config). For a
+# consistent snapshot of the panel files, change panels first, wait a few
+# seconds for plasmashell to write them, then save.
+set -euo pipefail
 
-KDE_CONFIGS=(
-    kdeglobals
-    kwinrc
-    plasmarc
-    plasmashellrc
-    plasma-org.kde.plasma.desktop-appletsrc
-    kglobalshortcutsrc
-    kscreenlockerrc
-    konsolerc
-    dolphinrc
-    kcminputrc
-    breezerc
-)
+DOTFILES="${DOTFILES:-$HOME/dotfiles}"
+MANIFEST="$DOTFILES/kde/manifest.txt"
+DEST="$DOTFILES/kde"
 
-for conf in "${KDE_CONFIGS[@]}"; do
-    src="$HOME/.config/$conf"
-    [[ -f "$src" ]] || continue
-    cp -f "$src" "$DOTFILES_KDE/$conf"
-    echo "saved: $conf"
-done
+# Credential locations are never copied, whatever the manifest says.
+DENY='(^|/)\.config/(gh|secrets)(/|$)|(^|/)\.(ssh|gnupg)(/|$)|(^|/)\.local/share/keyrings(/|$)'
 
-# --- Kvantum ---
-mkdir -p "$DOTFILES_KDE/Kvantum/KvDarkMinimal"
-cp -f "$HOME/.config/Kvantum/kvantum.kvconfig" \
-  "$DOTFILES_KDE/Kvantum/kvantum.kvconfig" 2>/dev/null && echo "saved: Kvantum/kvantum.kvconfig"
-cp -f "$HOME/.config/Kvantum/KvDarkMinimal/KvDarkMinimal.kvconfig" \
-  "$DOTFILES_KDE/Kvantum/KvDarkMinimal/KvDarkMinimal.kvconfig" 2>/dev/null && echo "saved: Kvantum/KvDarkMinimal/KvDarkMinimal.kvconfig"
-cp -f "$HOME/.config/Kvantum/KvDarkMinimal/KvDarkMinimal.svg" \
-  "$DOTFILES_KDE/Kvantum/KvDarkMinimal/KvDarkMinimal.svg" 2>/dev/null && echo "saved: Kvantum/KvDarkMinimal/KvDarkMinimal.svg"
+[[ -f "$MANIFEST" ]] || { echo "error: $MANIFEST not found" >&2; exit 1; }
 
-# --- environment.d (cursor vars) ---
-mkdir -p "$DOTFILES_KDE/environment.d"
-cp -f "$HOME/.config/environment.d/cursor.conf" \
-  "$DOTFILES_KDE/environment.d/cursor.conf" 2>/dev/null && echo "saved: environment.d/cursor.conf"
+saved=0 missing=0
+while IFS= read -r rel; do
+    rel="${rel%%#*}"; rel="${rel%"${rel##*[![:space:]]}"}"   # strip comments, trailing space
+    [[ -n "$rel" ]] || continue
+    if [[ "$rel" =~ $DENY ]]; then echo "REFUSED (credentials): $rel"; continue; fi
+    src="$HOME/$rel" dst="$DEST/$rel"
 
-# --- kde-material-you-colors ---
-mkdir -p "$DOTFILES_KDE/kde-material-you-colors"
-cp -f "$HOME/.config/kde-material-you-colors/config.conf" \
-  "$DOTFILES_KDE/kde-material-you-colors/config.conf" 2>/dev/null && echo "saved: kde-material-you-colors/config.conf"
+    if [[ "$rel" == */ ]]; then
+        if [[ ! -d "$src" ]]; then
+            echo "missing: $rel"; missing=$((missing + 1)); continue
+        fi
+        mkdir -p "$dst"
+        cp -a "$src." "$dst"
+        # Report (don't delete) files the repo has but the live dir no longer does.
+        while IFS= read -r -d '' g; do
+            g="${g#./}"
+            [[ -e "$src$g" ]] || echo "stale in repo (gone from live): $rel$g"
+        done < <(cd "$dst" && find . -type f -print0)
+    else
+        if [[ ! -f "$src" ]]; then
+            echo "missing: $rel"; missing=$((missing + 1)); continue
+        fi
+        mkdir -p "$(dirname "$dst")"
+        cp -f "$src" "$dst"
+    fi
+    echo "saved: $rel"
+    saved=$((saved + 1))
+done < "$MANIFEST"
 
-# --- systemd user service ---
-mkdir -p "$DOTFILES_KDE/systemd/user"
-cp -f "$HOME/.config/systemd/user/kde-material-you-colors.service" \
-  "$DOTFILES_KDE/systemd/user/kde-material-you-colors.service" 2>/dev/null && echo "saved: systemd/user/kde-material-you-colors.service"
-
-# --- Plasma desktop theme (DarkMinimal) ---
-DOTFILES_THEME="$HOME/dotfiles/kde/.local/share/plasma/desktoptheme/DarkMinimal"
-mkdir -p "$DOTFILES_THEME"
-cp -rf "$HOME/.local/share/plasma/desktoptheme/DarkMinimal/"* \
-  "$DOTFILES_THEME/" 2>/dev/null && echo "saved: DarkMinimal plasma theme"
-
-echo ""
-echo "Done. Review changes with: git -C ~/dotfiles diff --stat"
+echo
+echo "$saved saved, $missing missing."
+echo "Review: git -C \"$DOTFILES\" diff --stat -- kde"

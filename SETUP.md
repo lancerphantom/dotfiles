@@ -177,19 +177,26 @@ Installing a package doesn't turn it on. The two that break visible behaviour
 without erroring:
 
 ```bash
-systemctl --user enable --now kde-material-you-colors.service
+# (kde-material-you-colors.service — retired 2026-10-26)
 # sddm-theme-cycle.service — installed by sddm/install.sh, hooked into
 # halt/reboot/shutdown targets
 ```
 
 Also enabled and easy to forget: `ollama`, `tailscaled`, `libvirtd`,
-`waydroid-container`, `fstrim.timer`, `paccache.timer`.
+`waydroid-container`, `fstrim.timer`, `paccache.timer`, and the user units
+`organize-downloads.timer` and the three `overcast-*` units.
 
 ---
 
 ## Known problems, not yet fixed
 
 Recorded so they don't get rediscovered as new.
+
+> **Recheck before acting on the next two.** The 2026-08-27 capture
+> (`state/services-system.txt`) shows neither `iwd.service` nor `snapd` as
+> enabled — only NetworkManager and wpa_supplicant. Either they were fixed
+> after this section was written, or the capture is stale. Re-run
+> `capture-system-state.sh` and update or delete these entries.
 
 **Wifi stack contention.** `iwd.service`, `wpa_supplicant.service` and
 `NetworkManager.service` are all enabled simultaneously. These contend for the
@@ -238,15 +245,63 @@ they mean your config has diverged from upstream defaults that have since moved.
 
 ---
 
+## Overcast (icon theme, dock widget, Plasma style)
+
+Lives in its own project at `~/projects/claudeCode/kdeCons`, installed by
+`overcast-restore.sh` (BOOTSTRAP §9). Three facts that break things if
+forgotten:
+
+- **The dock widget is version-locked to Plasma.** "Overcast Tasks" is a
+  patched copy of Plasma's task manager, compiled against the exact installed
+  Plasma version. After a Plasma upgrade the old build may not load and the
+  dock is empty until `overcast-tasks-check.service` rebuilds it at the next
+  login (network needed). It looks like Plasma broke; it's this.
+- **Plasma only finds the widget through `QT_PLUGIN_PATH`**, set by
+  `~/.config/plasma-workspace/env/overcast-tasks.sh`. That file is read at
+  session start, so adding it needs a re-login.
+- **Panel configs depend on Overcast, not the other way round.** Restoring
+  `plasmarc` / the panel layout before Overcast is built gives Breeze with
+  opaque panels and a "widget not found" dock. `kde-restore.sh` refuses to run
+  in that state.
+
+Change panels with plasmashell stopped or through its scripting API — a
+running plasmashell rewrites its config on exit.
+
 ## Known inconsistency
 
-BOOTSTRAP.md §11 regenerates the pywal cache with `wal -n -s -t -i "$img"`, but
+BOOTSTRAP.md §14 regenerates the pywal cache with `wal -n -s -t -i "$img"`, but
 the working note for `kitty-launch.sh` says `-s` must be **omitted** for colours
 to apply. These disagree, and the bootstrap path is the one you'd be trusting on
 a fresh machine.
 
 Resolve by running both forms against one image and diffing
 `~/.cache/wal/image-colors/`, then correct whichever document is wrong.
+
+## Credentials that must never enter the repo
+
+**`~/.config/gh/`** — the GitHub CLI stored its token in
+`~/.config/gh/hosts.yml` in **plain text**, because no keyring (KWallet /
+Secret Service) was reachable when `gh auth login` ran. Anyone who can read
+that file can act as you on GitHub, including the private Overcast repo.
+
+Guards in place:
+
+- no stow package contains `.config/gh`, and `kde/manifest.txt` can't list it
+  (`kde-save.sh` / `kde-restore.sh` refuse credential paths);
+- `.gitignore` excludes `.config/gh/`, `gh/hosts.yml`, `.config/secrets/`,
+  `.ssh/`, `.gnupg/`;
+- `githooks/pre-commit` blocks those paths and anything that looks like a
+  GitHub token or private key (enable per clone:
+  `git config core.hooksPath githooks`);
+- `capture-system-state.sh` scans the whole repo for tokens and warns if
+  `~/.config` or `~/.config/gh` resolves into the repo through a folded stow
+  symlink.
+
+Don't `stow --adopt`. To get the token out of plain text once a keyring
+works: `gh auth logout`, then `gh auth login` (gh prefers the keyring when it
+can reach one) and check `gh auth status`.
+
+Same rule for `~/.config/secrets/` (API keys, BOOTSTRAP §15).
 
 ## Secure Boot key backup
 

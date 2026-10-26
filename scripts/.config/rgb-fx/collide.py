@@ -3,7 +3,7 @@ import importlib.util, math, pathlib
 _s = importlib.util.spec_from_file_location("_punch", pathlib.Path(__file__).with_name("_punch.py"))
 P = importlib.util.module_from_spec(_s); _s.loader.exec_module(P); H = P.H
 
-PERIOD = 1.8       # seconds per collision cycle
+PERIOD = 1.2       # seconds per collision cycle (was 1.8)
 TRAVEL = 0.5       # share of the cycle spent rushing in
 BURST = 0.28       # share of the cycle the burst lasts
 BG = 0.04

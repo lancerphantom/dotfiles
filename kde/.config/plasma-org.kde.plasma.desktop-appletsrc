@@ -5,7 +5,34 @@ RightButton;NoModifier=org.kde.contextmenu
 [ActionPlugins][1]
 RightButton;NoModifier=org.kde.contextmenu
 
+[Containments][111]
+activityId=
+formfactor=2
+immutability=1
+lastScreen=0
+location=4
+plugin=org.kde.panel
+wallpaperplugin=org.kde.image
+
+[Containments][111][Applets][112]
+immutability=1
+plugin=org.kde.plasma.kickoff
+
+[Containments][111][Applets][112][Configuration]
+popupHeight=586
+popupWidth=717
+
+[Containments][111][Applets][112][Configuration][General]
+favoritesPortedToKAstats=true
+
+[Containments][111][Applets][112][Shortcuts]
+global=Alt+F1
+
+[Containments][111][General]
+AppletOrder=112
+
 [Containments][61]
+ItemGeometries-1024x768=
 ItemGeometries-1280x1024=
 ItemGeometries-1280x720=
 ItemGeometries-1280x800=
@@ -21,14 +48,19 @@ plugin=org.kde.plasma.folder
 wallpaperplugin=org.kde.potd
 
 [Containments][61][ConfigDialog]
-DialogHeight=540
-DialogWidth=720
+DialogHeight=1001
+DialogWidth=2552
 
 [Containments][61][General]
 changedPositions={}
 lastResolution=2560x1080
-positions={"1280x1024":["1","11","desktop:/Gemini_Generated_Image_s2dw27s2dw27s2dw.png","0","4","desktop:/ mandelvrot.png","0","2","desktop:/Grokking_Algorithms.pdf","0","3","desktop:/Generated image 1.png","0","0","desktop:/But How Do It Know - The Basic Principles of Computers for Everyone - Author (J. Clark Scott).pdf","0","1"],"1280x720":["1","11","desktop:/orderReceipt.PDF","0","2","desktop:/Generated Image January 15, 2026 - 11_24AM.jpeg","0","6","desktop:/cdpr.png","0","4","desktop:/New Folder","0","0","desktop:/xbjLTAe6J0.apk","0","8","desktop:/blade-runner-2049-póster-design-v0-pxxwvkslj9ab1.jpg","0","3","desktop:/cdpr2.png","0","5","desktop:/errorScreenshot.png","0","1","desktop:/pictures","0","7"],"1280x800":["1","11","desktop:/errorScreenshot.png","0","1","desktop:/cdpr2.png","0","5","desktop:/pictures","0","7","desktop:/xbjLTAe6J0.apk","0","8","desktop:/orderReceipt.PDF","0","2","desktop:/blade-runner-2049-póster-design-v0-pxxwvkslj9ab1.jpg","0","3","desktop:/Generated Image January 15, 2026 - 11_24AM.jpeg","0","6","desktop:/New Folder","0","0","desktop:/cdpr.png","0","4"],"2560x1080":["1","23","desktop:/orderReceipt.PDF","0","2","desktop:/cdpr2.png","0","5","desktop:/pictures","0","7","desktop:/research-optimizer.skill","0","0","desktop:/077fea2f3afccd08bc61003f03c9dd9d.jpg","0","1","desktop:/xbjLTAe6J0.apk","0","8","desktop:/blade-runner-2049-póster-design-v0-pxxwvkslj9ab1.jpg","0","3","desktop:/just_make_the_water_to_flow_ke.mp4","0","3","desktop:/wg1Oe21.jpeg","0","0","desktop:/project-optimizer.md","0","1","desktop:/New Folder","0","0","desktop:/errorScreenshot.png","0","1","desktop:/Generated Image January 15, 2026 - 11_24AM.jpeg","0","6","desktop:/b0ea6210ff2e9e504578595a1f3a9692.jpg","0","2","desktop:/cdpr.png","0","4","desktop:/Unconfirmed 410585.crdownload","0","2"]}
+positions={"1024x768":["1","9","desktop:/077fea2f3afccd08bc61003f03c9dd9d.jpg","0","1","desktop:/cdpr2.png","0","5","desktop:/Generated Image January 15, 2026 - 11_24AM.jpeg","0","6","desktop:/research-optimizer.skill","0","0","desktop:/New Folder","0","0","desktop:/project-optimizer.md","0","1","desktop:/errorScreenshot.png","0","1","desktop:/blade-runner-2049-póster-design-v0-pxxwvkslj9ab1.jpg","0","3","desktop:/wg1Oe21.jpeg","0","0","desktop:/Unconfirmed 410585.crdownload","0","2","desktop:/cdpr.png","0","4","desktop:/just_make_the_water_to_flow_ke.mp4","0","3","desktop:/xbjLTAe6J0.apk","0","8","desktop:/orderReceipt.PDF","0","2","desktop:/pictures","0","7","desktop:/b0ea6210ff2e9e504578595a1f3a9692.jpg","0","2"],"1280x1024":["1","11","desktop:/Gemini_Generated_Image_s2dw27s2dw27s2dw.png","0","4","desktop:/ mandelvrot.png","0","2","desktop:/Grokking_Algorithms.pdf","0","3","desktop:/Generated image 1.png","0","0","desktop:/But How Do It Know - The Basic Principles of Computers for Everyone - Author (J. Clark Scott).pdf","0","1"],"1280x720":["1","11","desktop:/orderReceipt.PDF","0","2","desktop:/Generated Image January 15, 2026 - 11_24AM.jpeg","0","6","desktop:/cdpr.png","0","4","desktop:/New Folder","0","0","desktop:/xbjLTAe6J0.apk","0","8","desktop:/blade-runner-2049-póster-design-v0-pxxwvkslj9ab1.jpg","0","3","desktop:/cdpr2.png","0","5","desktop:/errorScreenshot.png","0","1","desktop:/pictures","0","7"],"1280x800":["1","11","desktop:/errorScreenshot.png","0","1","desktop:/cdpr2.png","0","5","desktop:/pictures","0","7","desktop:/xbjLTAe6J0.apk","0","8","desktop:/orderReceipt.PDF","0","2","desktop:/blade-runner-2049-póster-design-v0-pxxwvkslj9ab1.jpg","0","3","desktop:/Generated Image January 15, 2026 - 11_24AM.jpeg","0","6","desktop:/New Folder","0","0","desktop:/cdpr.png","0","4"],"2560x1080":["1","23","desktop:/mpv-shot0003.jpg","0","6","desktop:/wg1Oe21.jpeg","0","0","desktop:/research-optimizer.skill","0","0","desktop:/xbjLTAe6J0.apk","0","8","desktop:/orderReceipt.PDF","0","2","desktop:/mpv-shot0005.jpg","0","8","desktop:/cdpr2.png","0","5","desktop:/077fea2f3afccd08bc61003f03c9dd9d.jpg","0","1","desktop:/blade-runner-2049-póster-design-v0-pxxwvkslj9ab1.jpg","0","3","desktop:/errorScreenshot.png","0","1","desktop:/image-1789908634110.png","0","4","desktop:/cdpr.png","0","4","desktop:/Unconfirmed 410585.crdownload","0","2","desktop:/mpv-shot0004.jpg","0","7","desktop:/just_make_the_water_to_flow_ke.mp4","0","3","desktop:/mpv-shot0001.jpg","0","4","desktop:/project-optimizer.md","0","1","desktop:/b0ea6210ff2e9e504578595a1f3a9692.jpg","0","2","desktop:/pictures","0","7","desktop:/Generated Image January 15, 2026 - 11_24AM.jpeg","0","6","desktop:/mpv-shot0002.jpg","0","5","desktop:/New Folder","0","0"]}
 sortMode=-1
+
+[Containments][61][Wallpaper][org.kde.image][General]
+DynamicMode=2
+Image=/home/rdio/Downloads/3440x1440-wallpapers-v0-nvfexvqrwdr81.webp
+SlidePaths=/home/rdio/.local/share/wallpapers/,/usr/share/wallpapers/
 
 [Containments][61][Wallpaper][org.kde.potd][General]
 Provider=simonstalenhag
@@ -50,54 +82,25 @@ plugin=org.kde.plasma.digitalclock
 popupHeight=451
 popupWidth=560
 
-[Containments][62][Applets][109]
-immutability=1
-plugin=org.kde.plasma.icon
-
-[Containments][62][Applets][109][Configuration]
-localPath=/home/rdio/.local/share/plasma_icons/systemsettings (2).desktop
-url=file:///usr/share/applications/systemsettings.desktop
-
-[Containments][62][Applets][63]
-immutability=1
-plugin=org.kde.plasma.kickoff
-
-[Containments][62][Applets][63][Configuration]
-popupHeight=549
-popupWidth=735
-
-[Containments][62][Applets][63][Configuration][ConfigDialog]
-DialogHeight=540
-DialogWidth=720
-
-[Containments][62][Applets][63][Configuration][General]
-applicationsDisplay=0
-favoritesPortedToKAstats=true
-icon=start-here-kde
-systemFavorites=suspend\\,hibernate\\,reboot\\,shutdown
-
-[Containments][62][Applets][63][Configuration][Shortcuts]
-global=Alt+F1
-
-[Containments][62][Applets][68]
-immutability=1
-plugin=org.kde.plasma.marginsseparator
-
-[Containments][62][Applets][68][Configuration][ConfigDialog]
-DialogHeight=480
-DialogWidth=640
+[Containments][62][Applets][100][Configuration][ConfigDialog]
+DialogHeight=630
+DialogWidth=810
 
 [Containments][62][Applets][69]
 PreloadWeight=100
 activityId=
 formfactor=0
 immutability=1
-lastScreen=-1
+lastScreen=0
 location=0
 plugin=org.kde.plasma.systemtray
 popupHeight=432
 popupWidth=432
 wallpaperplugin=org.kde.image
+
+[Containments][62][Applets][69][Applets][110]
+immutability=1
+plugin=org.kde.plasma.dwellclicker
 
 [Containments][62][Applets][69][Applets][70]
 immutability=1
@@ -182,24 +185,11 @@ DialogHeight=540
 DialogWidth=720
 
 [Containments][62][Applets][69][General]
-extraItems=org.kde.plasma.brightness,org.kde.plasma.vault,org.kde.plasma.notifications,org.kde.plasma.networkmanagement,org.kde.plasma.weather,org.kde.plasma.manage-inputmethod,org.kde.plasma.keyboardindicator,org.kde.plasma.bluetooth,org.kde.plasma.clipboard,org.kde.plasma.devicenotifier,org.kde.plasma.printmanager,org.kde.kdeconnect,org.kde.plasma.cameraindicator,org.kde.plasma.keyboardlayout,org.kde.plasma.battery,org.kde.kscreen,org.kde.plasma.volume,org.kde.plasma.mediacontroller
-knownItems=org.kde.plasma.brightness,org.kde.plasma.vault,org.kde.plasma.notifications,org.kde.plasma.networkmanagement,org.kde.plasma.weather,org.kde.plasma.manage-inputmethod,org.kde.plasma.keyboardindicator,org.kde.plasma.bluetooth,org.kde.plasma.clipboard,org.kde.plasma.devicenotifier,org.kde.plasma.printmanager,org.kde.kdeconnect,org.kde.plasma.cameraindicator,org.kde.plasma.keyboardlayout,org.kde.plasma.battery,org.kde.kscreen,org.kde.plasma.volume,org.kde.plasma.mediacontroller
-
-[Containments][62][Applets][95]
-immutability=1
-plugin=org.kde.kdeconnect
-
-[Containments][62][Applets][95][Configuration]
-popupHeight=400
-popupWidth=560
-
-[Containments][62][Applets][96]
-immutability=1
-plugin=org.kde.plasma.vault
-
-[Containments][62][Applets][96][Configuration]
-popupHeight=400
-popupWidth=560
+extraItems=org.kde.plasma.brightness,org.kde.plasma.vault,org.kde.plasma.notifications,org.kde.plasma.networkmanagement,org.kde.plasma.weather,org.kde.plasma.manage-inputmethod,org.kde.plasma.keyboardindicator,org.kde.plasma.bluetooth,org.kde.plasma.clipboard,org.kde.plasma.devicenotifier,org.kde.plasma.printmanager,org.kde.kdeconnect,org.kde.plasma.cameraindicator,org.kde.plasma.keyboardlayout,org.kde.plasma.battery,org.kde.kscreen,org.kde.plasma.volume,org.kde.plasma.mediacontroller,org.kde.plasma.dwellclicker,org.kde.kupapplet
+iconSpacing=2
+knownItems=org.kde.plasma.brightness,org.kde.plasma.vault,org.kde.plasma.notifications,org.kde.plasma.networkmanagement,org.kde.plasma.weather,org.kde.plasma.manage-inputmethod,org.kde.plasma.keyboardindicator,org.kde.plasma.bluetooth,org.kde.plasma.clipboard,org.kde.plasma.devicenotifier,org.kde.plasma.printmanager,org.kde.kdeconnect,org.kde.plasma.cameraindicator,org.kde.plasma.keyboardlayout,org.kde.plasma.battery,org.kde.kscreen,org.kde.plasma.volume,org.kde.plasma.mediacontroller,org.kde.plasma.dwellclicker,org.kde.kupapplet
+scaleIconsToFit=false
+shownItems=org.kde.plasma.vault,org.kde.kdeconnect
 
 [Containments][62][Applets][97]
 immutability=1
@@ -210,7 +200,7 @@ DialogHeight=78
 DialogWidth=1920
 
 [Containments][62][General]
-AppletOrder=63;68;109;96;95;69;97;100
+AppletOrder=69;97;100
 
 [Containments][83]
 activityId=
@@ -221,29 +211,23 @@ location=4
 plugin=org.kde.panel
 wallpaperplugin=org.kde.image
 
-[Containments][83][Applets][91]
+[Containments][83][Applets][113]
 immutability=1
-plugin=org.kde.plasma.icontasks
+plugin=org.kde.plasma.overcasttasks
 
-[Containments][83][Applets][91][Configuration]
-popupHeight=400
-popupWidth=560
-
-[Containments][83][Applets][91][Configuration][ConfigDialog]
-DialogHeight=540
-DialogWidth=720
-
-[Containments][83][Applets][91][Configuration][General]
+[Containments][83][Applets][113][Configuration][General]
+highlightWindows=true
 iconSpacing=0
 launchers=applications:kitty.desktop,applications:brave-browser.desktop,applications:org.kde.dolphin.desktop,applications:com.anthropic.Claude.desktop
+tooltipControls=false
 
 [Containments][83][ConfigDialog]
 DialogHeight=78
 DialogWidth=1920
 
 [Containments][83][General]
-AppletOrder=91
+AppletOrder=113
 
 [ScreenMapping]
 itemsOnDisabledScreens=
-screenMapping=desktop:/just_make_the_water_to_flow_ke.mp4,0,b6bd48ae-b958-44e5-89d0-13d28044f4f4,desktop:/077fea2f3afccd08bc61003f03c9dd9d.jpg,0,b6bd48ae-b958-44e5-89d0-13d28044f4f4,desktop:/wg1Oe21.jpeg,0,b6bd48ae-b958-44e5-89d0-13d28044f4f4,desktop:/b0ea6210ff2e9e504578595a1f3a9692.jpg,0,b6bd48ae-b958-44e5-89d0-13d28044f4f4,desktop:/Secon Course,0,b6bd48ae-b958-44e5-89d0-13d28044f4f4
+screenMapping=desktop:/Secon Course,0,b6bd48ae-b958-44e5-89d0-13d28044f4f4

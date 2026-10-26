@@ -1,27 +1,30 @@
 #!/usr/bin/env bash
 # rgbmenu — one menu for all RGB controls. Arrows + Enter; Esc = back/quit.
 export PATH="$HOME/bin:$PATH"
-FZF=(fzf --height=70% --reverse --border --info=hidden --no-sort)
+FZF=(fzf --height=70% --reverse --border --info=hidden --no-sort --bind home:first,end:last --bind home:first,end:last --bind home:first,end:last)
+fz() { "${FZF[@]}" "$@"; local r=$?; rgb-preview --cancel; return $r; }
+fz() { "${FZF[@]}" "$@"; local r=$?; rgb-preview --cancel; return $r; }
+fz() { "${FZF[@]}" "$@"; local r=$?; rgb-preview --cancel; return $r; }
 saved() { cat ~/.cache/rgb-current 2>/dev/null || echo 00AAFF; }
 hexof() { rgb list | awk -v n="$1" '$1==n{print $2}'; }
 
 pick_devices() {   # prints e.g. "fans,kb" or "all"; empty = cancelled
   local s
   s=$(printf '%s\n' "all devices" fans keyboard mouse ram |
-      "${FZF[@]}" --multi --prompt='devices (Tab = pick several, Enter = done)> ') || return
+      fz --multi --prompt='devices (Tab = pick several, Enter = done)> ') || return
   grep -q 'all devices' <<<"$s" && { echo all; return; }
   sed 's/keyboard/kb/' <<<"$s" | paste -sd,
 }
 
 pick_colour() {    # live preview on DEVS; prints the colour name
   local dev=$1 prev=$(saved)
-  rgb list | "${FZF[@]}" --prompt='colour> ' \
-    --bind "focus:execute-silent(rgb {1} --temp ${dev:+--dev $dev})" | awk '{print $1}'
+  rgb list | fz --prompt='colour> ' \
+    --bind "focus:execute-silent(rgb-preview rgb {1} --temp ${dev:+--dev $dev})" | awk '{print $1}'
 }
 
 pick_brightness() {
-  printf '%s\n' 100 75 50 25 10 | "${FZF[@]}" --prompt='brightness %> ' \
-    --bind "focus:execute-silent(rgb $1 {1} --temp ${2:+--dev $2})"
+  printf '%s\n' 100 75 50 25 10 | fz --prompt='brightness %> ' \
+    --bind "focus:execute-silent(rgb-preview rgb $1 {1} --temp ${2:+--dev $2})"
 }
 
 colour_flow() {    # $1 = devices ("" = all)
@@ -35,8 +38,8 @@ colour_flow() {    # $1 = devices ("" = all)
 
 effect_flow() {
   local was=$(cat ~/.cache/rgb-fx 2>/dev/null) active=$(systemctl --user is-active rgb-fanfx) fx dev spd
-  fx=$(rgb-fanfx-list | "${FZF[@]}" --delimiter='\t' --with-nth=1,2 --prompt='effect> ' \
-        --bind 'focus:execute-silent(rgbmode fx {1})' | cut -f1)
+  fx=$(rgb-fanfx-list | fz --delimiter='\t' --with-nth=1,2 --prompt='effect> ' \
+        --bind 'focus:execute-silent(rgb-preview rgbmode fx {1})' | cut -f1)
   if [[ -z $fx ]]; then
     if [[ $active == active ]]; then rgbmode fx ${was} >/dev/null; else rgbmode fx-off >/dev/null; fi
     return
@@ -44,20 +47,20 @@ effect_flow() {
   dev=$(pick_devices) || dev=all
   [[ $dev == all || -z $dev ]] && dev=fans,kb,mouse,ram
   spd=$(printf '%s\n' "1    normal" "0.5  slow" "2    fast" "3    very fast" |
-        "${FZF[@]}" --prompt='speed> ' | awk '{print $1}')
+        fz --prompt='speed> ' | awk '{print $1}')
   rgbmode fx "$fx" "${spd:-1}" "$dev" >/dev/null
 }
 
 ram_flow() {
   local m c1 c2
   m=$(printf '%s\n' "off  (follow colour)" "Rainbow Wave" "Rainbow" "Color Shift" "Color Pulse" \
-        "Color Wave" "Visor" "Rain" "Marquee" "Sequential" | "${FZF[@]}" --prompt='RAM effect> ') || return
+        "Color Wave" "Visor" "Rain" "Marquee" "Sequential" | fz --prompt='RAM effect> ') || return
   case $m in
     off*) ramfx off ;;
     Rainbow*) ramfx "$m" ;;
-    Marquee|Sequential) c1=$(rgb list | "${FZF[@]}" --prompt='colour> ' | awk '{print $2}') && ramfx "$m" "$c1" ;;
-    *) c1=$(rgb list | "${FZF[@]}" --prompt='first colour> ' | awk '{print $2}') &&
-       c2=$(rgb list | "${FZF[@]}" --prompt='second colour> ' | awk '{print $2}') && ramfx "$m" "$c1,$c2" ;;
+    Marquee|Sequential) c1=$(rgb list | fz --prompt='colour> ' | awk '{print $2}') && ramfx "$m" "$c1" ;;
+    *) c1=$(rgb list | fz --prompt='first colour> ' | awk '{print $2}') &&
+       c2=$(rgb list | fz --prompt='second colour> ' | awk '{print $2}') && ramfx "$m" "$c1,$c2" ;;
   esac
 }
 
@@ -75,7 +78,7 @@ while true; do
     "Reset per-device colours" \
     "All off" \
     "Status" |
-    "${FZF[@]}" --prompt="rgb — now $(saved)> " --header='Esc to quit') || exit 0
+    fz --prompt="rgb — now $(saved)> " --header='Esc to quit') || exit 0
   case $choice in
     "Colour — all devices")    colour_flow "" ;;
     "Colour — choose devices") d=$(pick_devices) && [[ -n $d ]] && colour_flow "$([[ $d == all ]] || echo "$d")" ;;

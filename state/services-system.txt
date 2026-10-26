@@ -2,6 +2,7 @@ UNIT FILE                          STATE   PRESET
 avahi-daemon.service               enabled disabled
 bluetooth.service                  enabled disabled
 dbus-broker.service                enabled disabled
+expressvpn-service.service         enabled disabled
 getty@.service                     enabled enabled
 libvirtd.service                   enabled disabled
 lm_sensors.service                 enabled disabled
@@ -42,4 +43,4 @@ paccache.timer                     enabled disabled
 sysstat-collect.timer              enabled disabled
 sysstat-summary.timer              enabled disabled
 
-42 unit files listed.
+43 unit files listed.

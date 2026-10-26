@@ -32,6 +32,35 @@ echo "==> writing to $STATE"
 SECRET_DENY='(NetworkManager/system-connections|secureboot/keys|ssh/ssh_host_.*_key$|pacman\.d/gnupg|cups/ssl|shadow|gshadow|\.key$|brlapi)'
 
 # ---------------------------------------------------------------------------
+# 0. Package lists
+#
+# Native and foreign (AUR) packages go to separate files: pacman -S aborts the
+# whole transaction on one name it can't find, so packages.txt must not list
+# AUR packages. -debug split packages are dropped (they aren't in the AUR).
+# Only explicitly installed packages are listed; something you need that came
+# in as a dependency (python-pillow, librsvg, ...) disappears from the list
+# unless you mark it: sudo pacman -D --asexplicit <pkg>
+# ---------------------------------------------------------------------------
+echo "--> package lists"
+regen_list() {   # regen_list FILE PACMAN_FLAGS
+    local file="$1" flags="$2" before
+    before=$(git -C "$REPO" show "HEAD:${file#"$REPO/"}" 2>/dev/null || true)
+    pacman "$flags" | grep -v -- '-debug$' > "$file" || true
+    if [[ -n "$before" ]]; then
+        local dropped
+        dropped=$(comm -23 <(sort -u <<< "$before") <(sort -u "$file") | tr '\n' ' ')
+        [[ -z "$dropped" ]] || echo "    dropped from ${file##*/} since last commit: $dropped
+    (uninstalled, or now only a dependency — 'sudo pacman -D --asexplicit <pkg>' keeps it listed)"
+    fi
+}
+regen_list "$REPO/packages.txt" -Qqen
+regen_list "$REPO/aur-packages.txt" -Qqem
+if command -v flatpak > /dev/null; then
+    flatpak list --app --columns=application | sort > "$REPO/flatpak-apps.txt"
+    echo "    flatpak apps: $(wc -l < "$REPO/flatpak-apps.txt")"
+fi
+
+# ---------------------------------------------------------------------------
 # 1. Services
 # ---------------------------------------------------------------------------
 echo "--> services"
@@ -197,8 +226,15 @@ for f in "${ETC_FILES[@]}"; do
         continue
     fi
     dest="$REPO/etc${f#/etc}"
-    mkdir -p "$(dirname "$dest")"
-    sudo cp -a "$f" "$dest"
+    if sudo test -d "$f"; then
+        # Copy the directory's contents. "cp -a dir dest" into an existing dest
+        # nests a second copy (etc/modprobe.d/modprobe.d/...).
+        mkdir -p "$dest"
+        sudo cp -a "$f/." "$dest/"
+    else
+        mkdir -p "$(dirname "$dest")"
+        sudo cp -a "$f" "$dest"
+    fi
     echo "    $f"
 done
 
@@ -217,6 +253,26 @@ echo
 echo "==> secret scan"
 grep -rInE '(password|passwd|secret|token|psk=|api[_-]?key|BEGIN [A-Z ]*PRIVATE KEY)' \
     "$REPO/etc" || echo "    clean"
+
+# Whole repo, not just etc/: GitHub tokens or private keys anywhere tracked or
+# about to be. gh keeps its token in ~/.config/gh/hosts.yml when no keyring is
+# reachable; it must never end up here.
+oauth='oauth''_token:'
+leaks=$(cd "$REPO" && git ls-files -co --exclude-standard -z \
+        | xargs -0 grep -lIE "(gh[pousr]_[A-Za-z0-9]{36}|github_pat_[A-Za-z0-9_]{22,}|$oauth|BEGIN [A-Z ]*PRIVATE KEY)" 2>/dev/null || true)
+if [[ -n "$leaks" ]]; then
+    echo "    WARNING: possible credentials in the repo:"; sed 's/^/      /' <<< "$leaks"
+fi
+# A stow package folded over one of these dirs would make anything written
+# there (gh's token, for one) land inside the repo.
+for p in .config .config/gh .local .local/share; do
+    t=$(readlink -f "$HOME/$p" 2>/dev/null || true)
+    if [[ "$t" == "$REPO"/* ]]; then
+        echo "    WARNING: ~/$p resolves into the repo ($t) — files written there land in git"
+    fi
+done
+[[ "$(git -C "$REPO" config core.hooksPath)" == githooks ]] ||
+    echo "    note: commit guard off — git -C \"$REPO\" config core.hooksPath githooks"
 echo
 echo
-git -C "$REPO" status --short state etc 2>/dev/null || true
+git -C "$REPO" status --short state etc packages.txt aur-packages.txt flatpak-apps.txt 2>/dev/null || true

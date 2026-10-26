@@ -1,0 +1,15 @@
+# Overcast Tasks (the dock widget) is built against the exact installed Plasma
+# version. After a Plasma upgrade the old build won't load until it's rebuilt;
+# overcast-tasks-check.service does that at the next login (needs network,
+# takes a minute or two). This hook only reminds you — it can't build as root.
+[Trigger]
+Operation = Upgrade
+Type = Package
+Target = plasma-workspace
+Target = plasma-desktop
+Target = libplasma
+
+[Action]
+Description = Overcast: Plasma upgraded, dock widget needs a rebuild
+When = PostTransaction
+Exec = /usr/bin/echo Overcast: Plasma was upgraded. Log out and back in - the dock widget rebuilds at login, needs network, about 2 min. By hand: overcast-tasks/build.sh then restart plasma-plasmashell
