@@ -97,6 +97,7 @@ obsidian
 openbsd-netcat
 opencl-mesa
 os-prober
+oxygen-cursors
 pacman-contrib
 pandoc-cli
 partitionmanager

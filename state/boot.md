@@ -1,4 +1,4 @@
-# Boot state — captured 2026-10-26T10:17:27+05:30
+# Boot state — captured 2026-10-26T10:22:53+05:30
 
 REFERENCE ONLY. UUIDs belong to this disk. Read to understand the
 layout; do not paste into a fresh install.
@@ -168,7 +168,7 @@ TARGET  SOURCE         FSTYPE OPTIONS
 Filesystem      Size  Used Avail Use% Mounted on
 /dev/nvme0n1p2   49G   37G  9.7G  80% /
 devtmpfs        7.6G     0  7.6G   0% /dev
-tmpfs           7.8G   37M  7.8G   1% /dev/shm
+tmpfs           7.8G   36M  7.8G   1% /dev/shm
 efivarfs        128K   53K   71K  43% /sys/firmware/efi/efivars
 tmpfs           3.2G  1.9M  3.2G   1% /run
 none            1.0M     0  1.0M   0% /run/credentials/systemd-journald.service
