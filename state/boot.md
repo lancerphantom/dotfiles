@@ -1,4 +1,4 @@
-# Boot state — captured 2026-08-27T23:11:17+05:30
+# Boot state — captured 2026-10-26T10:12:43+05:30
 
 REFERENCE ONLY. UUIDs belong to this disk. Read to understand the
 layout; do not paste into a fresh install.
@@ -65,15 +65,15 @@ Boot Loaders Listed in EFI Variables:
          File: └─/boot//EFI/BOOT/BOOTX64.EFI
 
         Title: Windows Boot Manager
-           ID: 0x0003
-       Status: active, boot-order
-    Partition: /dev/disk/by-partuuid/f083aec2-8e96-4cfc-b917-99f576ee2eff
-         File: └─/boot//EFI/MICROSOFT/BOOT/BOOTMGFW.EFI
-
-        Title: Windows Boot Manager
            ID: 0x0004
        Status: active, boot-order
     Partition: /dev/disk/by-partuuid/3769304c-c250-4146-bec2-a645c3cd14f7
+         File: └─/boot//EFI/MICROSOFT/BOOT/BOOTMGFW.EFI
+
+        Title: Windows Boot Manager
+           ID: 0x0005
+       Status: active, boot-order
+    Partition: /dev/disk/by-partuuid/f083aec2-8e96-4cfc-b917-99f576ee2eff
          File: └─/boot//EFI/MICROSOFT/BOOT/BOOTMGFW.EFI
 
 Boot Loader Entry Locations:
@@ -88,7 +88,7 @@ Default Boot Loader Entry:
        source: /boot//loader/entries/arch-lts.conf (on the EFI System Partition)
         linux: /boot//vmlinuz-linux-lts
        initrd: /boot//initramfs-linux-lts.img
-      options: root=UUID=6ff4c1e0-b71e-4dd7-8ce9-1ea36409f164
+      options: root=UUID=6ff4c1e0-b71e-4dd7-8ce9-1ea36409f164 acpi_enforce_resources=lax
 ```
 
 ## boot entries
@@ -99,7 +99,7 @@ Default Boot Loader Entry:
        source: /boot//loader/entries/arch-lts.conf (on the EFI System Partition)
         linux: /boot//vmlinuz-linux-lts
        initrd: /boot//initramfs-linux-lts.img
-      options: root=UUID=6ff4c1e0-b71e-4dd7-8ce9-1ea36409f164
+      options: root=UUID=6ff4c1e0-b71e-4dd7-8ce9-1ea36409f164 acpi_enforce_resources=lax
 
          type: Automatic
         title: Windows Boot Manager
@@ -125,7 +125,7 @@ console-mode 0
 title Arch Linux (LTS)
 linux /vmlinuz-linux-lts
 initrd /initramfs-linux-lts.img
-options root=UUID=6ff4c1e0-b71e-4dd7-8ce9-1ea36409f164
+options root=UUID=6ff4c1e0-b71e-4dd7-8ce9-1ea36409f164 acpi_enforce_resources=lax
 ```
 
 ## secure boot
@@ -148,11 +148,11 @@ sda
 └─sda3      ntfs                  F4EE1C05EE1BBEB4                                    
 sdb                                                                                   
 └─sdb1      ext4      1.0         c70b22b8-c90e-4f37-9cab-30b503f912af                
-zram0       swap      1     zram0 39afecf7-5cb4-47ed-8807-002dd4283553                [SWAP]
+zram0       swap      1     zram0 b2f96faa-2280-49a2-9d33-e436ee763fff                [SWAP]
 nvme0n1                                                                               
-├─nvme0n1p1 vfat      FAT32       3341-F873                               689M    33% /boot
-├─nvme0n1p2 ext4      1.0         6ff4c1e0-b71e-4dd7-8ce9-1ea36409f164    7.9G    79% /
-└─nvme0n1p3 ext4      1.0         fe10fac0-c6cc-4d21-9711-8f8d020059aa  325.4G    58% /home
+├─nvme0n1p1 vfat      FAT32       3341-F873                             688.6M    33% /boot
+├─nvme0n1p2 ext4      1.0         6ff4c1e0-b71e-4dd7-8ce9-1ea36409f164    9.7G    75% /
+└─nvme0n1p3 ext4      1.0         fe10fac0-c6cc-4d21-9711-8f8d020059aa  265.2G    65% /home
 ```
 
 ## mounts
@@ -166,18 +166,18 @@ TARGET  SOURCE         FSTYPE OPTIONS
 ## disk usage
 ```
 Filesystem      Size  Used Avail Use% Mounted on
-/dev/nvme0n1p2   49G   39G  7.9G  84% /
+/dev/nvme0n1p2   49G   37G  9.7G  80% /
 devtmpfs        7.6G     0  7.6G   0% /dev
-tmpfs           7.8G   60M  7.8G   1% /dev/shm
+tmpfs           7.8G   34M  7.8G   1% /dev/shm
 efivarfs        128K   53K   71K  43% /sys/firmware/efi/efivars
 tmpfs           3.2G  1.9M  3.2G   1% /run
 none            1.0M     0  1.0M   0% /run/credentials/systemd-journald.service
 none            1.0M     0  1.0M   0% /run/credentials/systemd-resolved.service
-tmpfs           7.8G  7.1M  7.8G   1% /tmp
+tmpfs           7.8G   24M  7.8G   1% /tmp
 /dev/nvme0n1p1 1022M  334M  689M  33% /boot
-/dev/nvme0n1p3  888G  518G  326G  62% /home
-none            1.0M  4.0K 1020K   1% /run/credentials/libvirtd.service
+/dev/nvme0n1p3  888G  578G  266G  69% /home
 tmpfs           1.6G  124K  1.6G   1% /run/user/1000
+none            1.0M  4.0K 1020K   1% /run/credentials/libvirtd.service
 ```
 
 ## fstab
@@ -209,12 +209,11 @@ HOOKS=(base systemd autodetect microcode modconf kms keyboard keymap sd-vconsole
 
 ## kernels
 ```
-linux-lts 6.18.46-1
+linux-lts 6.18.57-2
 ```
 
 ## dkms
 ```
-binder/1, 6.18.46-1-lts, x86_64: installed
-nvidia/580.178.04, 6.18.46-1-lts, x86_64: installed
-vboxhost/7.2.16_OSE, 6.18.46-1-lts, x86_64: installed
+nvidia/580.178.04, 6.18.57-2-lts, x86_64: installed
+vboxhost/7.2.22_OSE, 6.18.57-2-lts, x86_64: installed
 ```

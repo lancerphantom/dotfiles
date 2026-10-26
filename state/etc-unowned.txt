@@ -4,6 +4,7 @@
 /etc/cups/subscriptions.conf.O
 /etc/default/grub.hyde.bkp
 /etc/hostname
+/etc/iproute2/rt_tables
 /etc/iwd/main.conf
 /etc/libvirt/qemu/debian12.xml
 /etc/libvirt/qemu/networks/autostart/default.xml
@@ -19,13 +20,21 @@
 /etc/mkinitcpio.d/linux-lts.preset
 /etc/mkinitcpio.d/linux.preset.pacsave
 /etc/modprobe.d/alsa-base.conf
+/etc/modprobe.d/btusb.conf
 /etc/modprobe.d/cfg80211.conf
 /etc/modprobe.d/nvidia-drm.conf
 /etc/modprobe.d/realtek-blacklist.conf
+/etc/modprobe.d/rtw88.conf
+/etc/modprobe.d/rtw88-usbmode.conf
 /etc/modprobe.d/usb-autosuspend.conf
+/etc/modules-load.d/i2c-dev.conf
 /etc/modules-load.d/vhost_vsock.conf
+/etc/NetworkManager/conf.d/default-wifi-powersave-on.conf
 /etc/NetworkManager/conf.d/disable-random-mac.conf
+/etc/NetworkManager/conf.d/wgexpressvpn.conf
 /etc/NetworkManager/conf.d/wifi-powersave.conf
+/etc/nvme/hostid
+/etc/nvme/hostnqn
 /etc/pacman.conf.hyde.bkp
 /etc/pacman.d/mirrorlist.backup
 /etc/pacman.d/mirrorlist.pacnew
@@ -33,6 +42,7 @@
 /etc/plymouth/plymouthd.confe
 /etc/plymouth/theme-cycle.conf
 /etc/sddm.conf
+/etc/sddm.conf.bak.20260925143627
 /etc/sddm.conf.d/autologin.conf
 /etc/sddm.conf.d/kde_settings.conf
 /etc/ssh/sshd_config.pacnew
@@ -48,9 +58,11 @@
 /etc/systemd/system/dbus.service
 /etc/systemd/system/default.target
 /etc/systemd/system/display-manager.service
+/etc/systemd/system/expressvpn-service.service
 /etc/systemd/system/grub-theme-rotate.service
 /etc/systemd/system/hibernate.target
 /etc/systemd/system/hybrid-sleep.target
+/etc/systemd/system/paccache.service.d/override.conf
 /etc/systemd/system/plymouth-quit.service.d/override.conf
 /etc/systemd/system/plymouth-theme-rotate-boot.service
 /etc/systemd/system/plymouth-theme-rotate.service
@@ -61,5 +73,6 @@
 /etc/systemd/zram-generator.conf
 /etc/tpm2-tss/fapi-profiles/P_ECCP384SHA384.json.pacnew
 /etc/tpm2-tss/fapi-profiles/P_RSA3072SHA384.json.pacnew
+/etc/udev/rules.d/61-tmkb-mouse.rules
 /etc/vconsole.conf
 /etc/X11/xorg.conf.d/00-keyboard.conf
