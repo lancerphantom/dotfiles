@@ -267,15 +267,16 @@ forgotten:
 Change panels with plasmashell stopped or through its scripting API — a
 running plasmashell rewrites its config on exit.
 
-## Known inconsistency
+## kitty and pywal
 
-BOOTSTRAP.md §14 regenerates the pywal cache with `wal -n -s -t -i "$img"`, but
-the working note for `kitty-launch.sh` says `-s` must be **omitted** for colours
-to apply. These disagree, and the bootstrap path is the one you'd be trusting on
-a fresh machine.
-
-Resolve by running both forms against one image and diffing
-`~/.cache/wal/image-colors/`, then correct whichever document is wrong.
+New kitty windows (menu, Meta+`) start `~/bin/kitty-launch.sh`, not plain
+kitty: it picks a random image from `~/Pictures/fastfetch/`, builds that
+image's colours with `wal -n -i <image> -q` (no `-s`) on first use, caches them
+in `~/.cache/wal/image-colors/`, and starts kitty with them. Two launchers
+route there — `kitty.desktop` (overrides the system one) and
+`net.local.bash.desktop` (the Meta+` shortcut); both are in
+`kde/manifest.txt`. Lose either and kitty still opens, just without the image
+and colours, so it looks like a pywal problem when it isn't.
 
 ## Credentials that must never enter the repo
 

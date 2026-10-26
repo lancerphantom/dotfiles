@@ -31,6 +31,22 @@
 # theme=Default#, i.e. Kvantum's own default.
 .config/Kvantum/kvantum.kvconfig
 
+# --- Hand-made launchers (~/.local/share/applications) ---------------------
+# Only launchers that do something a reinstall wouldn't recreate. Installer-
+# and app-generated ones (Burp Suite, Claude, Waydroid, wine, KDE's "open
+# with" kate/kwrite entries) are left out; overcast-restore.sh sets their
+# icons. kde-restore.sh warns if a launcher's program is missing.
+.local/share/applications/kitty.desktop
+#   overrides the system kitty launcher: starts ~/bin/kitty-launch.sh
+.local/share/applications/net.local.bash.desktop
+#   the Meta+` custom shortcut (kglobalshortcutsrc) → kitty-launch.sh
+.local/share/applications/affinity.desktop
+#   only shortcut to ~/Applications/Affinity-3-x86_64.AppImage
+.local/share/applications/bully.desktop
+#   starts ~/bully.sh
+.local/share/applications/antigravity.desktop
+#   starts /opt/antigravity/antigravity
+
 # --- Deliberately NOT tracked ----------------------------------------------
 # .config/kwinoutputconfig.json   monitor layout; specific to these screens.
 #                                 The committed copy is from 2026-08 and was

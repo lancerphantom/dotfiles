@@ -1,0 +1,7 @@
+[Desktop Entry]
+Categories=Game;
+Exec=/home/rdio/bully.sh
+Icon=bully
+Name=Bully Scholarship Edition
+Terminal=false
+Type=Application

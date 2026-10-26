@@ -1,0 +1,9 @@
+[Desktop Entry]
+Categories=Development;IDE;
+Comment=Google Antigravity IDE
+Exec=/opt/antigravity/antigravity %U
+Icon=antigravity
+Name=Antigravity
+StartupWMClass=Antigravity
+Terminal=false
+Type=Application

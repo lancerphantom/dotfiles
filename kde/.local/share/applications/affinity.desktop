@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Affinity
+Comment=Photo, vector and layout editor
+Exec=/home/rdio/Applications/Affinity-3-x86_64.AppImage
+Icon=affinity
+Categories=Graphics;2DGraphics;RasterGraphics;VectorGraphics;
+Terminal=false
+StartupNotify=true

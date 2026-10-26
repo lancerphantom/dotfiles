@@ -276,6 +276,9 @@ they can't drift. The restore:
 - refuses to run while `plasmashell` is running;
 - refuses if the icon theme, Plasma style or Overcast Tasks widget the
   restored files name isn't there — run step 9 first;
+- restores the hand-made launchers (kitty → `kitty-launch.sh`, the Meta+`
+  shortcut, Affinity, Bully, Antigravity) and warns if the program one starts
+  isn't there yet;
 - warns about other missing widgets, the global theme, the cursor theme
   (`kcminputrc`) and an Aurorae window decoration theme;
 - backs up any live file it replaces to `~/.local/state/kde-restore/<time>/`.
@@ -356,28 +359,19 @@ Deliberately excluded, and several things stay broken until these are back:
 - **Wallpapers** — the desktop now uses Plasma's picture-of-the-day plugin
   (Simon Stålenhag), which downloads its own images, but `plasmarc` still
   lists old wallpaper paths under `~/Pictures/Wallpapers/`.
-- **`~/Pictures/fastfetch/`** — the random-image cycling has nothing to cycle,
-  and the pywal cache can't be built.
+- **`~/Pictures/fastfetch/`** — the random-image cycling (fastfetch and
+  every new kitty window) has nothing to cycle until it's back.
+- **Programs the saved launchers start** — `kde-restore.sh --check` warns
+  about each one that's missing:
+  - `~/Applications/Affinity-3-x86_64.AppImage` (download it again);
+  - `~/bully.sh` and the game it starts;
+  - Burp Suite (`~/BurpSuite/`, its installer recreates its own launcher);
+  - Antigravity (`/opt/antigravity/`).
 
-Restore from backup, then regenerate the pywal cache:
-
-```bash
-# per-image color schemes, consumed by ~/bin/kitty-launch.sh
-for img in ~/Pictures/fastfetch/*; do wal -n -s -t -i "$img"; done
-```
-
-> **Unresolved:** the working note for `kitty-launch.sh` says `-s` must be
-> **omitted** for colours to apply. That contradicts the line above. Test both
-> against one image and diff `~/.cache/wal/image-colors/` before trusting
-> either. See `SETUP.md`.
-
-Check `~/.cache/wal/image-colors/` afterwards — `kitty-launch.sh` reads from
-there and silently falls back if it's empty.
-
-> **Missing:** `kitty-launch.sh` is not in the repo, and neither is the
-> custom-shortcut launcher `~/.local/share/applications/net.local.bash.desktop`
-> that `kglobalshortcutsrc` binds to Meta+backtick. Both need adding, or that
-> shortcut and the pywal kitty colours don't survive a rebuild.
+No pywal step is needed: `kitty-launch.sh` (now in `scripts/bin/`) runs
+`wal -n -i <image> -q` the first time it picks an image and caches the colours
+in `~/.cache/wal/image-colors/`. The first kitty window per image opens a
+moment slower.
 
 ## 15. Secrets
 
@@ -479,8 +473,6 @@ Things to confirm rather than assume:
   Check whether it should hold anything, or drop it.
 - `.zshrc` may still carry Hyprland-era aliases (`mood`, `hyprlogout`) that do
   nothing under KDE.
-- The pywal `-s` contradiction, `kitty-launch.sh` and
-  `net.local.bash.desktop` (step 14).
 - `/usr/local/bin/plymouth-theme-rotate` and the three Plymouth themes aren't
   captured anywhere (step 12).
 - `sddm-astronaut-theme`, `zoxide`, `openrgb` and the Bibata cursor theme aren't in either package list. Some may have been

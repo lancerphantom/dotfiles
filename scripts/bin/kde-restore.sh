@@ -144,6 +144,22 @@ if [[ -f "$SRC/.config/kwinrc" ]]; then
     fi
 fi
 
+# Launchers: warn when the program a restored launcher starts isn't there
+# (AppImages, installer-made apps and scripts in ~ aren't in this repo).
+for rel in "${entries[@]}"; do
+    [[ "$rel" == .local/share/applications/*.desktop && -f "$SRC/$rel" ]] || continue
+    exec_line=$(ini_get "$SRC/$rel" "Desktop Entry" Exec)
+    read -r -a argv <<< "${exec_line//\"/}"
+    prog="${argv[0]:-}"
+    if [[ "$prog" == bash || "$prog" == sh || "$prog" == env ]]; then prog="${argv[1]:-}"; fi
+    [[ -n "$prog" ]] || continue
+    if [[ "$prog" == /* ]]; then
+        [[ -e "$prog" ]] || warn "${rel##*/} starts $prog, which doesn't exist yet"
+    elif ! command -v "$prog" > /dev/null; then
+        warn "${rel##*/} starts '$prog', which isn't installed"
+    fi
+done
+
 echo "  $errors error(s), $warnings warning(s)"
 
 [[ "$mode" == check ]] && exit $((errors > 0))
