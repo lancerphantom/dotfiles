@@ -17,7 +17,8 @@
 #   4. generate Nothing-Floating, build the icon theme, build the dock widget;
 #      write the Overcast colour scheme; install the Overcast Clock widget
 #      (the clock and colour scheme also with --no-build: no compiling involved);
-#      generate the Overcast lock screen package
+#      generate the Overcast lock screen, startup splash and cursor theme; build
+#      the Overcast Launcher (app menu) next to the dock widget
 #   5. plasma-workspace env script (QT_PLUGIN_PATH) so Plasma finds the widget
 #   6. systemd user units installed and enabled, plus the KWin drop-in that
 #      selects the Overcast lock screen (kscreenlockerrc comes from kde-restore.sh)
@@ -38,7 +39,7 @@ build=1
 for arg in "$@"; do
     case "$arg" in
         --no-build) build=0 ;;
-        -h|--help) sed -n '2,25p' "$0"; exit 0 ;;
+        -h|--help) sed -n '2,26p' "$0"; exit 0 ;;
         *) echo "unknown option: $arg" >&2; exit 2 ;;
     esac
 done
@@ -115,6 +116,10 @@ if (( build )); then
     fi
     note "building the dock widget (clones plasma-desktop for this Plasma version; needs network)"
     "$OVERCAST_DIR/overcast-tasks/build.sh"
+    if [[ -x "$OVERCAST_DIR/overcast-launcher/build.sh" ]]; then
+        note "building the app launcher (same source)"
+        "$OVERCAST_DIR/overcast-launcher/build.sh"
+    fi
 else
     step "4/8 build: skipped (--no-build)"
 fi
@@ -134,14 +139,19 @@ if [[ -d "$clock_pkg" ]]; then
 else
     note "no overcast-clock/ in the checkout (older than 6b4a3d4): the clocks will show as missing widgets"
 fi
-# The lock screen: a patched copy of this Plasma's own (needs the built icons' palette.json).
-if [[ -f "$OVERCAST_DIR/lockscreen/make_lockscreen.py" ]]; then
+# The lock screen (a patched copy of this Plasma's own), the startup splash and the
+# cursor theme, which the restored kscreenlockerrc / ksplashrc / kcminputrc name.
+# They need the built icons' palette.json.
+for gen in lockscreen/make_lockscreen.py:"lock screen" splash/make_splash.py:"startup splash" \
+           cursors/make_cursors.py:"cursor theme"; do
+    script=${gen%%:*}; what=${gen#*:}
+    [[ -f "$OVERCAST_DIR/$script" ]] || continue
     if [[ -f "$XDG_DATA_HOME/icons/Overcast/palette.json" ]]; then
-        python3 "$OVERCAST_DIR/lockscreen/make_lockscreen.py" > /dev/null && note "Overcast lock screen generated"
+        python3 "$OVERCAST_DIR/$script" > /dev/null && note "Overcast $what generated"
     else
-        note "lock screen not generated yet (no icon build); overcast-refresh.service makes it at login"
+        note "$what not generated yet (no icon build); overcast-refresh.service makes it at login"
     fi
-fi
+done
 
 # --------------------------------------------------------------------------
 step "5/8 plasma-workspace env script"

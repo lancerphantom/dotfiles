@@ -14,6 +14,7 @@
 .config/kglobalshortcutsrc
 .config/kscreenlockerrc
 .config/kcminputrc
+.config/ksplashrc
 .config/plasmanotifyrc
 .config/konsolerc
 .config/dolphinrc
