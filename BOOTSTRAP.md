@@ -242,7 +242,10 @@ What it does, in order (see the script header):
 4. generates Nothing-Floating, builds the icon theme (default or pinned
    palette — it recolours from the wallpaper at the first login) and builds the
    dock widget. **The dock build clones plasma-desktop for the installed Plasma
-   version, so it needs network** and takes a few minutes;
+   version, so it needs network** and takes a few minutes. It also writes the
+   Overcast colour scheme (selected by the restored `kdeglobals`) and installs
+   the Overcast Clock widget used by the restored desktop and panel — these two
+   run with `--no-build` too;
 5. installs the `plasma-workspace/env` script from the checkout;
 6. installs and enables `overcast-refresh.path`, `overcast-refresh.service`
    and `overcast-tasks-check.service`;

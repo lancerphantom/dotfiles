@@ -14,7 +14,9 @@
 #   1. build dependencies present
 #   2. Overcast checkout at $OVERCAST_DIR (cloned from $OVERCAST_REPO if missing)
 #   3. "Nothing" Plasma style present (source of Nothing-Floating)
-#   4. generate Nothing-Floating, build the icon theme, build the dock widget
+#   4. generate Nothing-Floating, build the icon theme, build the dock widget;
+#      write the Overcast colour scheme; install the Overcast Clock widget
+#      (the clock and colour scheme also with --no-build: no compiling involved)
 #   5. plasma-workspace env script (QT_PLUGIN_PATH) so Plasma finds the widget
 #   6. systemd user units installed and enabled
 #   7. folder (.directory), launcher (.desktop) and Places icons
@@ -113,6 +115,22 @@ if (( build )); then
     "$OVERCAST_DIR/overcast-tasks/build.sh"
 else
     step "4/8 build: skipped (--no-build)"
+fi
+# The restored kdeglobals selects the Overcast colour scheme; write its file now
+# (overcast-refresh.service sets the wallpaper's accent at the next login).
+if [[ -f "$OVERCAST_DIR/colors.py" ]]; then
+    (cd "$OVERCAST_DIR" && python3 colors.py --no-apply > /dev/null) && note "Overcast colour scheme written"
+fi
+# The restored panel and desktop use the Overcast Clock widget (plain QML).
+clock_pkg="$OVERCAST_DIR/overcast-clock/package"
+if [[ -d "$clock_pkg" ]]; then
+    if kpackagetool6 -t Plasma/Applet -s org.overcast.clock > /dev/null 2>&1; then
+        kpackagetool6 -t Plasma/Applet -u "$clock_pkg" > /dev/null && note "Overcast Clock widget updated"
+    else
+        kpackagetool6 -t Plasma/Applet -i "$clock_pkg" > /dev/null && note "Overcast Clock widget installed"
+    fi
+else
+    note "no overcast-clock/ in the checkout (older than 6b4a3d4): the clocks will show as missing widgets"
 fi
 
 # --------------------------------------------------------------------------
