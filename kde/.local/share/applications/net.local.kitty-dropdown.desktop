@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Kitty drop-down
+Comment=Overcast drop-down terminal (F12 shows and hides it)
+Exec=kitten quick-access-terminal
+Icon=kitty
+NoDisplay=true
+StartupNotify=false
+X-KDE-GlobalAccel-CommandShortcut=true
+X-KDE-Shortcuts=F12

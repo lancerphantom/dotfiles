@@ -40,6 +40,8 @@
 #   overrides the system kitty launcher: starts ~/bin/kitty-launch.sh
 .local/share/applications/net.local.bash.desktop
 #   the Meta+` custom shortcut (kglobalshortcutsrc) → kitty-launch.sh
+.local/share/applications/net.local.kitty-dropdown.desktop
+#   F12 (kglobalshortcutsrc) → kitten quick-access-terminal: the Overcast drop-down terminal
 .local/share/applications/affinity.desktop
 #   only shortcut to ~/Applications/Affinity-3-x86_64.AppImage
 .local/share/applications/bully.desktop

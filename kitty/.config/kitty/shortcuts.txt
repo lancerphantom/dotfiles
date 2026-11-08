@@ -1,0 +1,30 @@
+[1;36m  Overcast terminal — shortcuts[0m                        [2mq to close[0m
+
+[1;36m  windows & tabs[0m
+    Ctrl+Shift+Enter    split this window (opens in the same folder)
+    Alt+Arrows          move between splits
+    Ctrl+Shift+Z        zoom the current split / back
+    Ctrl+Shift+W        close the current split
+    Ctrl+Shift+T        new tab (same folder)
+    Alt+1 … Alt+5       go to tab 1 … 5
+    Ctrl+Shift+Q        close the tab
+
+[1;36m  find & open[0m
+    Ctrl+Shift+F        search everything printed so far (type /word, Enter)
+    Ctrl+Shift+E        pick a link on screen by letter and open it
+    Ctrl+Shift+P, F     pick a file path on screen and paste it
+    Ctrl+Shift+P, H     pick a git hash on screen and paste it
+
+[1;36m  text[0m
+    Ctrl+Shift+C / V    copy / paste            right click: paste
+    Ctrl+Shift+= / -    bigger / smaller text   Ctrl+Shift+Backspace: reset
+
+[1;36m  anywhere on the desktop[0m
+    F12                 drop-down terminal (F12 again hides it)
+    Meta+`              new kitty window
+
+[1;36m  shell[0m
+    →                   accept the grey suggestion from your history
+    Ctrl+R              search your command history (fzf)
+    cd <part of name>   jump to a folder you've visited (zoxide)
+    Esc Esc             put sudo in front of the last command

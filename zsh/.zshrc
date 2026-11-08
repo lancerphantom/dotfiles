@@ -1,10 +1,17 @@
-# ===== Startup =====
-if [[ "$TERM_PROGRAM" != "vscode" ]]; then
-  _img="${FASTFETCH_IMAGE:-${(f)$(ls /home/rdio/Pictures/fastfetch/* | shuf -n1)}}"
-  _tmp=$(mktemp /tmp/fastfetch-XXXX.jsonc)
-  sed "s|\"source\":.*|\"source\": \"$_img\",|" ~/.config/fastfetch/config.jsonc > "$_tmp"
-  fastfetch --config "$_tmp"
-  rm -f "$_tmp"
+# ===== Startup: Overcast fastfetch =====
+# Today's painting, a greeting, system info and pending updates, in the
+# wallpaper's colours (written by Overcast's terminal.py). Skipped in VS Code
+# and in the F12 drop-down terminal (OVERCAST_QUICK).
+_ov=~/.local/share/overcast/terminal
+# Pending updates: re-counted in the background at most once an hour.
+_upd=~/.cache/overcast/updates
+if [[ ! -f $_upd || -n $(find $_upd -mmin +60 2>/dev/null) ]] && (( $+commands[checkupdates] )); then
+  mkdir -p ${_upd:h}
+  ( n=$(checkupdates 2>/dev/null | wc -l) && print $n > $_upd.tmp && mv $_upd.tmp $_upd ) &!
+fi
+if [[ "$TERM_PROGRAM" != "vscode" && -z "$OVERCAST_QUICK" && -r $_ov/fastfetch.jsonc ]]; then
+  [[ -n $KITTY_WINDOW_ID && -r $_ov/painting.png ]] && { print; kitten icat --align=left $_ov/painting.png 2>/dev/null }
+  fastfetch -c $_ov/fastfetch.jsonc
 fi
 
 export WLR_PRIMARY_SELECTION=1
@@ -28,6 +35,13 @@ plugins=(
 )
 source $ZSH/oh-my-zsh.sh
 
+# ===== Prompt: Overcast starship (folder, git, errors, slow commands) =====
+# Falls back to robbyrussell above until starship is installed.
+if (( $+commands[starship] )) && [[ -r $_ov/starship.toml ]]; then
+  export STARSHIP_CONFIG=$_ov/starship.toml
+  eval "$(starship init zsh)"
+fi
+
 # ===== History =====
 HISTFILE=~/.zsh_history
 HISTSIZE=100000
@@ -45,6 +59,13 @@ export PATH="$HOME/bin:$HOME/.local/bin:$HOME/.npm-global/bin:$BUN_INSTALL/bin:$
 
 # ===== Aliases =====
 alias ll='ls -lah'
+# Nicer ls / cat once eza and bat are installed (icons, git status, colours).
+if (( $+commands[eza] )); then
+  alias ls='eza --icons=auto --group-directories-first'
+  alias ll='eza -lah --icons=auto --group-directories-first --git'
+  alias tree='eza --tree --icons=auto'
+fi
+(( $+commands[bat] )) && alias cat='bat --paging=never --style=plain'
 alias update='yay -Syu --noconfirm'
 alias zshconfig='nano ~/.zshrc'
 alias mood='~/.config/hypr/scripts/random-wall.sh'
@@ -105,16 +126,11 @@ export NVM_DIR="$HOME/.nvm"
 export BUN_INSTALL="$HOME/.bun"
 [ -s "/home/rdio/.bun/_bun" ] && source "/home/rdio/.bun/_bun"
 
-# ===== Zoxide =====
-eval "$(zoxide init --cmd cd zsh)"
-
 # ===== FZF =====
 export FZF_ALT_C_COMMAND="fd --type d --hidden --exclude .git"
+# Ctrl+R: search history, Ctrl+T: pick a file, Alt+C: jump to a folder
+(( $+commands[fzf] )) && source <(fzf --zsh)
 export LC_ALL=en_US.UTF-8
-
-# Restore pywal colors on shell start
-(cat ~/.cache/wal/sequences &) 2>/dev/null
-[[ -f ~/.cache/wal/colors.sh ]] && source ~/.cache/wal/colors.sh
 
 
 # Added by Antigravity CLI installer
@@ -249,3 +265,6 @@ _rgb() { (( CURRENT == 2 )) && _rgb_colours; }
 compdef _rgbmode rgbmode
 compdef _rgb rgb
 alias rgbm='rgbmenu'
+
+# ===== Zoxide (must stay last, or zoxide warns about its setup) =====
+eval "$(zoxide init --cmd cd zsh)"
