@@ -16,9 +16,11 @@
 #   3. "Nothing" Plasma style present (source of Nothing-Floating)
 #   4. generate Nothing-Floating, build the icon theme, build the dock widget;
 #      write the Overcast colour scheme; install the Overcast Clock widget
-#      (the clock and colour scheme also with --no-build: no compiling involved)
+#      (the clock and colour scheme also with --no-build: no compiling involved);
+#      generate the Overcast lock screen package
 #   5. plasma-workspace env script (QT_PLUGIN_PATH) so Plasma finds the widget
-#   6. systemd user units installed and enabled
+#   6. systemd user units installed and enabled, plus the KWin drop-in that
+#      selects the Overcast lock screen (kscreenlockerrc comes from kde-restore.sh)
 #   7. folder (.directory), launcher (.desktop) and Places icons
 #   8. kbuildsycoca6
 set -euo pipefail
@@ -36,7 +38,7 @@ build=1
 for arg in "$@"; do
     case "$arg" in
         --no-build) build=0 ;;
-        -h|--help) sed -n '2,22p' "$0"; exit 0 ;;
+        -h|--help) sed -n '2,25p' "$0"; exit 0 ;;
         *) echo "unknown option: $arg" >&2; exit 2 ;;
     esac
 done
@@ -132,6 +134,14 @@ if [[ -d "$clock_pkg" ]]; then
 else
     note "no overcast-clock/ in the checkout (older than 6b4a3d4): the clocks will show as missing widgets"
 fi
+# The lock screen: a patched copy of this Plasma's own (needs the built icons' palette.json).
+if [[ -f "$OVERCAST_DIR/lockscreen/make_lockscreen.py" ]]; then
+    if [[ -f "$XDG_DATA_HOME/icons/Overcast/palette.json" ]]; then
+        python3 "$OVERCAST_DIR/lockscreen/make_lockscreen.py" > /dev/null && note "Overcast lock screen generated"
+    else
+        note "lock screen not generated yet (no icon build); overcast-refresh.service makes it at login"
+    fi
+fi
 
 # --------------------------------------------------------------------------
 step "5/8 plasma-workspace env script"
@@ -159,6 +169,12 @@ for u in "${UNITS[@]}"; do
     chmod 644 "$unit_dir/$u"
 done
 [[ "$unit_path" == "$DEFAULT_UNIT_DIR" ]] || note "unit paths rewritten to $unit_path"
+dropin="$OVERCAST_DIR/systemd/plasma-kwin_wayland.service.d/overcast-lockscreen.conf"
+if [[ -f "$dropin" ]]; then
+    mkdir -p "$unit_dir/plasma-kwin_wayland.service.d"
+    install -m 644 "$dropin" "$unit_dir/plasma-kwin_wayland.service.d/"
+    note "KWin uses the Overcast lock screen from the next login"
+fi
 if systemctl --user daemon-reload 2> /dev/null; then
     systemctl --user enable "${UNITS[@]}"
     note "enabled (they start at the next Plasma login)"
