@@ -195,6 +195,9 @@ fi
 
 # --------------------------------------------------------------------------
 step "7/8 folder, launcher and Places icons"
+if [[ -x "$OVERCAST_DIR/apps/hide_apps.py" ]]; then
+    python3 "$OVERCAST_DIR/apps/hide_apps.py" > /dev/null && note "launcher clutter hidden (apps/hidden.txt)"
+fi
 
 # set_icon FILE GROUP ICON — set Icon= in an ini-style file, keeping the rest.
 # Prints "set", "same" or "created".
