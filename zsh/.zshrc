@@ -1,5 +1,5 @@
 # ===== Startup: Overcast fastfetch =====
-# Today's painting, a greeting, system info and pending updates, in the
+# Today's painting (animated), a greeting, system info and pending updates, in the
 # wallpaper's colours (written by Overcast's terminal.py). Skipped in VS Code
 # and in the F12 drop-down terminal (OVERCAST_QUICK).
 _ov=~/.local/share/overcast/terminal
@@ -10,7 +10,8 @@ if [[ ! -f $_upd || -n $(find $_upd -mmin +60 2>/dev/null) ]] && (( $+commands[c
   ( n=$(checkupdates 2>/dev/null | wc -l) && print $n > $_upd.tmp && mv $_upd.tmp $_upd ) &!
 fi
 if [[ "$TERM_PROGRAM" != "vscode" && -z "$OVERCAST_QUICK" && -r $_ov/fastfetch.jsonc ]]; then
-  [[ -n $KITTY_WINDOW_ID && -r $_ov/painting.png ]] && { print; kitten icat --align=left $_ov/painting.png 2>/dev/null }
+  # the "living painting": today's wallpaper as a slow seamless loop
+  [[ -n $KITTY_WINDOW_ID && -r $_ov/painting.gif ]] && kitten icat --loop -1 --align=left $_ov/painting.gif 2>/dev/null
   fastfetch -c $_ov/fastfetch.jsonc
 fi
 
