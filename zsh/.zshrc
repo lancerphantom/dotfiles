@@ -10,8 +10,26 @@ if [[ ! -f $_upd || -n $(find $_upd -mmin +60 2>/dev/null) ]] && (( $+commands[c
   ( n=$(checkupdates 2>/dev/null | wc -l) && print $n > $_upd.tmp && mv $_upd.tmp $_upd ) &!
 fi
 if [[ "$TERM_PROGRAM" != "vscode" && -z "$OVERCAST_QUICK" && -r $_ov/fastfetch.jsonc ]]; then
-  # the "living painting": today's wallpaper as a slow seamless loop
-  [[ -n $KITTY_WINDOW_ID && -r $_ov/painting.gif ]] && kitten icat --loop -1 --align=left $_ov/painting.gif 2>/dev/null
+  # the "living painting": today's wallpaper as a slow seamless loop, stretched
+  # across the full window width (the strip is 6:1; rows = its height in text rows)
+  if [[ -n $KITTY_WINDOW_ID && -r $_ov/painting.gif ]]; then
+    # kitty widens a new window ~0.1 s after the shell starts: wait (max 0.5 s)
+    # until the size has held still for 0.15 s, so the strip gets the final width
+    _sz=$(tput cols)x$(tput lines); _still=0
+    for _i in {1..10}; do
+      sleep 0.05
+      if [[ $(tput cols)x$(tput lines) == $_sz ]]; then (( ++_still >= 3 )) && break
+      else _sz=$(tput cols)x$(tput lines); _still=0; fi
+    done
+    COLUMNS=${_sz%x*}; LINES=${_sz#*x}
+    _px=$(kitten icat --print-window-size 2>/dev/null)
+    if [[ $_px == <->x<-> ]] && (( LINES > 0 )); then
+      _rows=$(( (${_px%x*} * LINES + 6 * ${_px#*x} - 1) / (6 * ${_px#*x}) ))
+      kitten icat --loop -1 --scale-up --place ${COLUMNS}x${_rows}@0x0 $_ov/painting.gif 2>/dev/null
+      print -n ${(pl:_rows::\n:)}
+    fi
+    unset _px _rows _sz _still _i
+  fi
   fastfetch -c $_ov/fastfetch.jsonc
 fi
 

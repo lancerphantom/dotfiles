@@ -100,4 +100,7 @@ Placement=Smart
 Scale=1
 
 [org.kde.kdecoration2]
-library=org.kde.kwin.aurorae.v2
+ButtonsOnLeft=
+ButtonsOnRight=IAX
+library=org.kde.kwin.aurorae
+theme=__aurorae__svg__Overcast
