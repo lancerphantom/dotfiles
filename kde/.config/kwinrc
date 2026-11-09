@@ -5,6 +5,11 @@ Id_3=8e42ef27-631b-46f2-9eff-bdab3a41c468
 Number=3
 Rows=1
 
+[Effect-diminactive]
+DimFullScreen=false
+DimKeepAbove=false
+Strength=15
+
 [Effect-kwin6_effect_glitch]
 Color=68,255,0
 
@@ -14,11 +19,31 @@ NightTemperature=6500
 
 [Plugins]
 desktopchangeosdEnabled=false
-fadeEnabled=true
+diminactiveEnabled=true
+fadeEnabled=false
+glideEnabled=true
 krohnkiteEnabled=true
+kwin4_effect_shapecornersEnabled=true
 kzonesEnabled=false
+magiclampEnabled=true
 scaleEnabled=false
+squashEnabled=false
 wobblywindowsEnabled=true
+
+[Round-Corners]
+ActiveOutlineAlpha=230
+DisableOutlineTile=false
+DisableRoundTile=false
+InactiveCornerRadius=10
+InactiveOutlineAlpha=255
+InactiveOutlineColor=#50565c
+InactiveOutlineThickness=1
+InactiveSecondOutlineThickness=0
+OutlineColor=#4adcff
+OutlineThickness=2
+SecondOutlineThickness=0
+Size=10
+UseSquircleShape=false
 
 [Script-krohnkite]
 columnsLayoutInitialRotationAngle=3
@@ -102,5 +127,5 @@ Scale=1
 [org.kde.kdecoration2]
 ButtonsOnLeft=
 ButtonsOnRight=IAX
-library=org.kde.kwin.aurorae
+library=org.kde.kwin.aurorae.v2
 theme=__aurorae__svg__Overcast

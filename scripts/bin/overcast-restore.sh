@@ -18,10 +18,12 @@
 #      write the Overcast colour scheme; install the Overcast Clock widget
 #      (the clock and colour scheme also with --no-build: no compiling involved);
 #      generate the Overcast lock screen, startup splash and cursor theme; build
-#      the Overcast Launcher (app menu) next to the dock widget
+#      the Overcast Launcher (app menu) next to the dock widget, and the
+#      rounded-corners KWin effect (its settings come with kwinrc from kde-restore.sh)
 #   5. plasma-workspace env script (QT_PLUGIN_PATH) so Plasma finds the widget
-#   6. systemd user units installed and enabled, plus the KWin drop-in that
-#      selects the Overcast lock screen (kscreenlockerrc comes from kde-restore.sh)
+#   6. systemd user units installed and enabled, plus the KWin drop-ins that
+#      select the Overcast lock screen (kscreenlockerrc comes from kde-restore.sh)
+#      and keep a stale rounded-corners build from loading after a KWin update
 #   7. folder (.directory), launcher (.desktop) and Places icons
 #   8. kbuildsycoca6
 set -euo pipefail
@@ -120,6 +122,10 @@ if (( build )); then
         note "building the app launcher (same source)"
         "$OVERCAST_DIR/overcast-launcher/build.sh"
     fi
+    if [[ -x "$OVERCAST_DIR/overcast-corners/build.sh" ]]; then
+        note "building the rounded-corners KWin effect (KDE-Rounded-Corners; needs network)"
+        "$OVERCAST_DIR/overcast-corners/build.sh"
+    fi
 else
     step "4/8 build: skipped (--no-build)"
 fi
@@ -179,12 +185,12 @@ for u in "${UNITS[@]}"; do
     chmod 644 "$unit_dir/$u"
 done
 [[ "$unit_path" == "$DEFAULT_UNIT_DIR" ]] || note "unit paths rewritten to $unit_path"
-dropin="$OVERCAST_DIR/systemd/plasma-kwin_wayland.service.d/overcast-lockscreen.conf"
-if [[ -f "$dropin" ]]; then
+for dropin in "$OVERCAST_DIR"/systemd/plasma-kwin_wayland.service.d/*.conf; do
+    [[ -f "$dropin" ]] || continue
     mkdir -p "$unit_dir/plasma-kwin_wayland.service.d"
-    install -m 644 "$dropin" "$unit_dir/plasma-kwin_wayland.service.d/"
-    note "KWin uses the Overcast lock screen from the next login"
-fi
+    sed "s|$DEFAULT_UNIT_DIR|$unit_path|g" "$dropin" > "$unit_dir/plasma-kwin_wayland.service.d/$(basename "$dropin")"
+    note "KWin drop-in $(basename "$dropin") installed (from the next login)"
+done
 if systemctl --user daemon-reload 2> /dev/null; then
     systemctl --user enable "${UNITS[@]}"
     note "enabled (they start at the next Plasma login)"
