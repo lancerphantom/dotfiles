@@ -25,13 +25,15 @@ glideEnabled=true
 krohnkiteEnabled=true
 kwin4_effect_shapecornersEnabled=true
 kzonesEnabled=false
-magiclampEnabled=true
+magiclampEnabled=false
+overcast_makewayEnabled=true
 scaleEnabled=false
-squashEnabled=false
+squashEnabled=true
 wobblywindowsEnabled=true
 
 [Round-Corners]
-ActiveOutlineAlpha=230
+ActiveOutlineAlpha=255
+ActiveSecondOutlineAlpha=255
 DisableOutlineTile=false
 DisableRoundTile=false
 InactiveCornerRadius=10
@@ -39,10 +41,12 @@ InactiveOutlineAlpha=255
 InactiveOutlineColor=#50565c
 InactiveOutlineThickness=1
 InactiveSecondOutlineThickness=0
-OutlineColor=#4adcff
-OutlineThickness=2
-SecondOutlineThickness=0
+OutlineColor=#50565c
+OutlineThickness=1
+SecondOutlineColor=#4adcff
+SecondOutlineThickness=3
 Size=10
+UseNativeDecorationShadows=true
 UseSquircleShape=false
 
 [Script-krohnkite]

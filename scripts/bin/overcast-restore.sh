@@ -129,6 +129,10 @@ if (( build )); then
 else
     step "4/8 build: skipped (--no-build)"
 fi
+# Overcast's own KWin effects (JavaScript, no compiling): the "Make Way" window opening.
+if [[ -x "$OVERCAST_DIR/animations/install.sh" ]]; then
+    "$OVERCAST_DIR/animations/install.sh" > /dev/null && note "KWin effect Make Way installed"
+fi
 # The restored kdeglobals selects the Overcast colour scheme; write its file now
 # (overcast-refresh.service sets the wallpaper's accent at the next login).
 if [[ -f "$OVERCAST_DIR/colors.py" ]]; then
