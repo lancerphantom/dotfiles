@@ -12,7 +12,11 @@ FX_DIR, STATE = HOME / ".config/rgb-fx", HOME / ".cache/rgb-fx"
 FAN_LEDS, FPS = 6, 30
 KB_WB = (1.0, 0.565, 0.439)                 # keyboard white balance
 DEV = {"ram": "Vengeance", "fans": "B550M", "mouse": None, "kb": "Apex 3"}   # OpenRGB device names (numbers change between boots); mouse uses tmkb_mouse
-RAM_FPS = 15                                        # RAM is on the slow SMBus
+RAM_MODE = "custom"   # "custom": real per-LED effect on the RAM (Custom mode, ~15 updates/s)
+                      # "shift":  fallback - whole stick one colour, 1 update/s via Color Shift
+                      #           (use this if Custom shows a stuck green fade again)
+RAM_FPS = 15          # custom mode: RAM is on the slow SMBus
+RAM_HZ = 1.0          # shift mode: 3/s froze, 1/s keeps up
 
 argv = sys.argv[1:]
 def opt(flag):
@@ -71,14 +75,25 @@ if "mouse" in targets:
         mouse = Mouse(); mouse.mode(MOUSE_MODES["zones"])
     except OSError as ex:
         print("mouse unavailable:", ex, flush=True)
-if "ram" in dev:                                   # RAM: switch to per-LED Custom mode (slow bus, retry)
+ram_mode = None
+if "ram" in dev and RAM_MODE == "custom":          # RAM: per-LED Custom mode (slow bus, retry)
     for attempt in range(3):
         try:
-            dev["ram"].set_mode("Custom"); time.sleep(1.5); break
+            dev["ram"].set_mode("Custom"); time.sleep(1.5)
+            dev["ram"].update()
+            if dev["ram"].modes[dev["ram"].active_mode].name == "Custom":
+                print("RAM: per-LED Custom mode", flush=True); break
+            print("RAM mode switch did not stick, retrying", flush=True)
         except Exception as ex:
             print("RAM mode switch failed, retrying:", ex, flush=True); time.sleep(2)
     else:
-        print("RAM unavailable — running without it", flush=True); dev.pop("ram")
+        print("RAM Custom mode unavailable - falling back to whole-stick colour", flush=True)
+        RAM_MODE = "shift"
+if "ram" in dev and RAM_MODE == "shift":           # RAM: whole-stick colour through the Color Shift mode
+    ram_mode = next((m for m in dev["ram"].modes if m.name == "Color Shift"), None)
+    if ram_mode is None:
+        print("RAM has no Color Shift mode — running without it", flush=True); dev.pop("ram")
+ram_peak, ram_sent = (0, 0, 0), None
 
 path = FX_DIR / f"{name}.py"
 fx, mtime = load(name), path.stat().st_mtime
@@ -111,9 +126,21 @@ while True:
             n = len(dev["kb"].leds)
             zones = [clamp(p) for p in fx.frame(t - dly("keyboard"), base, n)]
             dev["kb"].set_colors([RGBColor(*(int(c * w) for c, w in zip(p, KB_WB))) for p in zones], fast=True)
-        if "ram" in dev and now - ram_t >= 1 / RAM_FPS:
-            ram_t = now
-            dev["ram"].set_colors([RGBColor(*clamp(p)) for p in fx.frame(t - dly("ram"), base, len(dev["ram"].leds))], fast=True)
+        if "ram" in dev and RAM_MODE == "custom":
+            if now - ram_t >= 1 / RAM_FPS:
+                ram_t = now
+                px = [clamp(p) for p in fx.frame(t - dly("ram"), base, len(dev["ram"].leds))]
+                dev["ram"].set_colors([RGBColor(*p) for p in px], fast=True)
+        elif "ram" in dev:
+            px = fx.frame(t - dly("ram"), base, len(dev["ram"].leds))
+            avg = clamp(tuple(sum(c) / len(px) for c in zip(*px)))
+            if sum(avg) > sum(ram_peak): ram_peak = avg          # brightest moment since the last update (keeps flashes)
+            if now - ram_t >= 1 / RAM_HZ:
+                ram_t = now
+                if ram_peak != ram_sent:
+                    ram_mode.colors = [RGBColor(*ram_peak)] * 2
+                    dev["ram"].set_mode(ram_mode); ram_sent = ram_peak
+                ram_peak = (0, 0, 0)
         if mouse:
             arc = [clamp(p) for p in fx.frame(t - dly("mouse"), base, 5)]
             mouse.zones(arc + [clamp(fx.frame(t - dly("mouse"), base, 1)[0])])
