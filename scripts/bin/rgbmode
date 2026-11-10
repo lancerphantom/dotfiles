@@ -1,9 +1,16 @@
 #!/usr/bin/env bash
-# rgbmode auto|wallpaper|static [COLOUR …]|off|music-on|music-off|fx EFFECT [SPEED]|fx-off|fx-list|status
+# rgbmode auto|wallpaper|static [COLOUR …]|off|music-on|music-off|fx EFFECT [SPEED]|fx-off|fx-colour wallpaper|chosen|fx-palette wallpaper|harmony|fx-list|status
 OFF=~/.cache/rgb-off
 svc() { systemctl --user "$@" 2>/dev/null; }
 saved() { cat ~/.cache/rgb-current 2>/dev/null || echo 00AAFF; }
 PY=~/.local/share/rgb-music/venv/bin/python
+SET=~/.config/rgb-fx/settings.conf
+fxset() { grep -m1 "^[[:space:]]*$1[[:space:]]*=" "$SET" 2>/dev/null | cut -d= -f2 | sed 's/#.*//' | tr -d ' '; }
+setopt() { [[ -f $SET ]] || printf 'colour = chosen\npalette = harmony\n' > "$SET"
+           if grep -q "^[[:space:]]*$1[[:space:]]*=" "$SET"; then sed -i --follow-symlinks "s|^[[:space:]]*$1[[:space:]]*=[^#]*|$1 = $2    |" "$SET"
+           else echo "$1 = $2" >> "$SET"; fi; }
+wall_for_fx() { if [[ $(fxset colour) == wallpaper || $(fxset palette) == wallpaper ]]; then
+                  svc enable --now rgb-wallpaper; [[ -s ~/.cache/rgb-wall ]] || svc restart rgb-wallpaper; fi; }
 
 case "${1:-status}" in
   auto)
@@ -38,7 +45,12 @@ case "${1:-status}" in
     echo "$2 ${3:-1.0} ${4:-fans,kb,mouse,ram}" > ~/.cache/rgb-fx
     svc disable --now rgb-music
     svc enable rgb-fanfx
-    svc restart rgb-fanfx ;;
+    svc restart rgb-fanfx
+    wall_for_fx ;;
+  fx-colour)
+    setopt colour "${2:-wallpaper}"; wall_for_fx; echo "effects use: colour = $(fxset colour), palette = $(fxset palette)" ;;
+  fx-palette)
+    setopt palette "${2:-wallpaper}"; wall_for_fx; echo "effects use: colour = $(fxset colour), palette = $(fxset palette)" ;;
   fx-off)
     svc disable --now rgb-fanfx
     sleep 1; rgb "$(saved)" --temp ;;
@@ -49,6 +61,7 @@ case "${1:-status}" in
       printf "%-14s %s\n" "$s" "$(svc is-active $s)"
     done
     [[ $(svc is-active rgb-fanfx) == active ]] && echo "fan effect: $(cat ~/.cache/rgb-fx)"
+    echo "effect colours: colour = $(fxset colour), palette = $(fxset palette)"
     [[ -f "$OFF" ]] && echo "mode: off" || echo "colour: $(saved)" ;;
-  *) echo "usage: rgbmode auto|wallpaper|static [COLOUR …]|off|music-on|music-off|fx EFFECT [SPEED]|fx-off|fx-list|status" ;;
+  *) echo "usage: rgbmode auto|wallpaper|static [COLOUR …]|off|music-on|music-off|fx EFFECT [SPEED]|fx-off|fx-colour wallpaper|chosen|fx-palette wallpaper|harmony|fx-list|status" ;;
 esac

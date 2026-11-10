@@ -64,6 +64,17 @@ ram_flow() {
   esac
 }
 
+effect_colours_flow() {
+  local c
+  c=$(printf '%s\n' "Wallpaper colours (main + palette)" "Wallpaper main colour, harmony palette" "My chosen colour, harmony palette" |
+      fz --prompt='effect colours> ') || return
+  case $c in
+    "Wallpaper colours"*)       rgbmode fx-colour wallpaper; rgbmode fx-palette wallpaper ;;
+    "Wallpaper main colour"*)   rgbmode fx-colour wallpaper; rgbmode fx-palette harmony ;;
+    "My chosen colour"*)        rgbmode fx-colour chosen;    rgbmode fx-palette harmony ;;
+  esac >/dev/null
+}
+
 while true; do
   music=$(systemctl --user is-active rgb-music >/dev/null && echo on || echo off)
   choice=$(printf '%s\n' \
@@ -72,6 +83,7 @@ while true; do
     "Wallpaper colours + music" \
     "Wallpaper colours (no music)" \
     "Effect…" \
+    "Effect colours…" \
     "RAM built-in effect…" \
     "Music on fans: $music (toggle)" \
     "Stop effect" \
@@ -85,6 +97,7 @@ while true; do
     "Wallpaper colours + music")    rgbmode auto ;;
     "Wallpaper colours (no music)") rgbmode wallpaper ;;
     "Effect…")               effect_flow ;;
+    "Effect colours…")       effect_colours_flow ;;
     "RAM built-in effect…")  ram_flow ;;
     Music*) [[ $music == on ]] && rgbmode music-off || rgbmode music-on ;;
     "Stop effect")           rgbmode fx-off ;;

@@ -47,6 +47,13 @@ targets = [t for t in (on or (args[2] if len(args) > 2 else "fans,kb,mouse,ram")
 if name not in effects():
     sys.exit(f"unknown effect '{name}' — available: {', '.join(effects())}")
 
+_ws = importlib.util.spec_from_file_location("_wallpal", FX_DIR / "_wallpal.py")
+WALL = importlib.util.module_from_spec(_ws); _ws.loader.exec_module(WALL)
+
+def base_colour():
+    """Wallpaper's main colour if settings.conf says colour = wallpaper, else your chosen colour."""
+    return WALL.main_colour() or saved()
+
 def saved():
     try: h = (HOME / ".cache/rgb-current").read_text().strip()
     except OSError: h = "00AAFF"
@@ -98,17 +105,26 @@ ram_peak, ram_sent = (0, 0, 0), None
 path = FX_DIR / f"{name}.py"
 fx, mtime = load(name), path.stat().st_mtime
 ram_t = 0.0
-t0, last_check, paused, base = time.monotonic(), 0.0, False, saved()
+t0, last_check, paused, base = time.monotonic(), 0.0, False, base_colour()
 
 def dly(d):
     return getattr(fx, "DELAYS", {}).get(d, 0.0)
+
+def fr(d, t, base, n):
+    """One device's frame. Effects may define frame_dev(device, t, base, n) to know which device
+    they draw (keyboard, mouse, logo, fans, ram); otherwise frame(t, base, n) is used.
+    DELAYS (per device, seconds) shifts each device's time; the logo follows the mouse."""
+    tt = t - (dly(d) if d in getattr(fx, "DELAYS", {}) else dly("mouse") if d == "logo" else dly(d))
+    if hasattr(fx, "frame_dev"):
+        return fx.frame_dev(d, tt, base, n)
+    return fx.frame(tt, base, n)
 
 while True:
     now = time.monotonic()
     if dur and now - t0 > dur:
         break
     if now - last_check > 1:
-        last_check, paused, base = now, locked(), saved()
+        last_check, paused, base = now, locked(), base_colour()
         try:
             if path.stat().st_mtime != mtime:
                 mtime = path.stat().st_mtime; fx = load(name); print(f"reloaded {name}", flush=True)
@@ -119,20 +135,20 @@ while True:
     t = (now - t0) * speed
     try:
         if "fans" in dev:
-            ring = [clamp(p) for p in fx.frame(t - dly("fans"), base, FAN_LEDS)]
+            ring = [clamp(p) for p in fr("fans", t, base, FAN_LEDS)]
             cols = [RGBColor(b, r, g) for r, g, b in ring]                      # fan channel reorder
             dev["fans"].set_colors(cols + [RGBColor(0, 0, 0)] * (len(dev["fans"].leds) - len(cols)), fast=True)
         if "kb" in dev:
             n = len(dev["kb"].leds)
-            zones = [clamp(p) for p in fx.frame(t - dly("keyboard"), base, n)]
+            zones = [clamp(p) for p in fr("keyboard", t, base, n)]
             dev["kb"].set_colors([RGBColor(*(int(c * w) for c, w in zip(p, KB_WB))) for p in zones], fast=True)
         if "ram" in dev and RAM_MODE == "custom":
             if now - ram_t >= 1 / RAM_FPS:
                 ram_t = now
-                px = [clamp(p) for p in fx.frame(t - dly("ram"), base, len(dev["ram"].leds))]
+                px = [clamp(p) for p in fr("ram", t, base, len(dev["ram"].leds))]
                 dev["ram"].set_colors([RGBColor(*p) for p in px], fast=True)
         elif "ram" in dev:
-            px = fx.frame(t - dly("ram"), base, len(dev["ram"].leds))
+            px = fr("ram", t, base, len(dev["ram"].leds))
             avg = clamp(tuple(sum(c) / len(px) for c in zip(*px)))
             if sum(avg) > sum(ram_peak): ram_peak = avg          # brightest moment since the last update (keeps flashes)
             if now - ram_t >= 1 / RAM_HZ:
@@ -142,8 +158,8 @@ while True:
                     dev["ram"].set_mode(ram_mode); ram_sent = ram_peak
                 ram_peak = (0, 0, 0)
         if mouse:
-            arc = [clamp(p) for p in fx.frame(t - dly("mouse"), base, 5)]
-            mouse.zones(arc + [clamp(fx.frame(t - dly("mouse"), base, 1)[0])])
+            arc = [clamp(p) for p in fr("mouse", t, base, 5)]
+            mouse.zones(arc + [clamp(fr("logo", t, base, 1)[0])])
     except Exception as ex:
         print(f"effect error: {ex}", flush=True); time.sleep(1)
     time.sleep(1 / FPS)

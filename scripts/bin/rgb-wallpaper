@@ -79,9 +79,12 @@ while true; do
       hex=$(pick "$img"); kb=$(gradient "$img")
     fi
     if [[ -n "$hex" ]]; then
-      rgb "$hex"
-      echo "$kb" > ~/.cache/rgb-kbd
-      rgb "$hex" --temp
+      echo "$hex" > ~/.cache/rgb-wall; echo "$kb" > ~/.cache/rgb-wall-palette   # for effects
+      if ! systemctl --user is-active --quiet rgb-fanfx; then                     # an effect owns the lights
+        rgb "$hex"
+        echo "$kb" > ~/.cache/rgb-kbd
+        rgb "$hex" --temp
+      fi
     fi
     last="$sig"
   fi

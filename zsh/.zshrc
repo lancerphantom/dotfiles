@@ -295,3 +295,5 @@ alias rgbm='rgbmenu'
 
 # ===== Zoxide (must stay last, or zoxide warns about its setup) =====
 eval "$(zoxide init --cmd cd zsh)"
+alias fxwall='rgbmode fx-colour wallpaper; rgbmode fx-palette wallpaper'
+alias fxown='rgbmode fx-colour chosen; rgbmode fx-palette harmony'

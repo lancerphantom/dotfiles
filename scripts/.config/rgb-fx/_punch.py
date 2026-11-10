@@ -13,7 +13,8 @@ def load(name):
     return m
 
 
-H = load("comet")      # _oklch, _lch, _w, _dist, _is_ring, _lvl, _point, _h, _noise, _c8
+H = load("comet")
+W = load("_wallpal")      # _oklch, _lch, _w, _dist, _is_ring, _lvl, _point, _h, _noise, _c8
 _vivid_cache = {}
 
 
@@ -32,6 +33,9 @@ def vivid(h, L=0.72):
 
 
 def palette(base, offsets):
+    w = W.pick(len(offsets))
+    if w:
+        return w
     h0 = hue(base)
     return [vivid(h0 + o) for o in offsets]
 

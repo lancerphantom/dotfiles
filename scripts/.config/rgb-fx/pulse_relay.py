@@ -4,7 +4,7 @@ _s = importlib.util.spec_from_file_location("_punch", pathlib.Path(__file__).wit
 P = importlib.util.module_from_spec(_s); _s.loader.exec_module(P); H = P.H
 
 # Per-device time offsets (seconds), read by the effects engine:
-DELAYS = {"ram": 0.0, "keyboard": 0.45, "fans": 0.9, "mouse": 1.25}
+DELAYS = {"keyboard": 0.0, "mouse": 0.45, "fans": 0.9, "ram": 1.25}
 PERIOD = 2.2        # one relay per 2.2 s
 RUN = 0.45          # time for the pulse to cross one device
 WIDTH = 1.3
