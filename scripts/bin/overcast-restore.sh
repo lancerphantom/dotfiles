@@ -122,12 +122,24 @@ if (( build )); then
         note "building the app launcher (same source)"
         "$OVERCAST_DIR/overcast-launcher/build.sh"
     fi
+    if [[ -x "$OVERCAST_DIR/overcast-notify/build.sh" ]]; then
+        note "building the notification pop-ups (clones plasma-workspace; needs network)"
+        "$OVERCAST_DIR/overcast-notify/build.sh"
+    fi
     if [[ -x "$OVERCAST_DIR/overcast-corners/build.sh" ]]; then
         note "building the rounded-corners KWin effect (KDE-Rounded-Corners; needs network)"
         "$OVERCAST_DIR/overcast-corners/build.sh"
     fi
 else
     step "4/8 build: skipped (--no-build)"
+fi
+# The volume pop-up (QML only, found through QML_IMPORT_PATH from plasma-workspace/env).
+if [[ -x "$OVERCAST_DIR/overcast-notify/install_osd.py" ]]; then
+    if [[ -f "$XDG_DATA_HOME/icons/Overcast/palette.json" ]]; then
+        python3 "$OVERCAST_DIR/overcast-notify/install_osd.py" > /dev/null
+    else
+        python3 "$OVERCAST_DIR/overcast-notify/install_osd.py" --palette "$OVERCAST_DIR/palettes/default.json" > /dev/null
+    fi && note "volume pop-up (Overcast OSD) installed"
 fi
 # Overcast's own KWin effects (JavaScript, no compiling): the "Make Way" window opening.
 if [[ -x "$OVERCAST_DIR/animations/install.sh" ]]; then
