@@ -20,6 +20,7 @@
 #      generate the Overcast lock screen, startup splash and cursor theme; build
 #      the Overcast Launcher (app menu) next to the dock widget, and the
 #      rounded-corners KWin effect (its settings come with kwinrc from kde-restore.sh)
+#      and the Overcast app style (selected by kdeglobals from kde-restore.sh)
 #   5. plasma-workspace env script (QT_PLUGIN_PATH) so Plasma finds the widget
 #   6. systemd user units installed and enabled, plus the KWin drop-ins that
 #      select the Overcast lock screen (kscreenlockerrc comes from kde-restore.sh)
@@ -41,7 +42,7 @@ build=1
 for arg in "$@"; do
     case "$arg" in
         --no-build) build=0 ;;
-        -h|--help) sed -n '2,26p' "$0"; exit 0 ;;
+        -h|--help) sed -n '2,27p' "$0"; exit 0 ;;
         *) echo "unknown option: $arg" >&2; exit 2 ;;
     esac
 done
@@ -129,6 +130,11 @@ if (( build )); then
     if [[ -x "$OVERCAST_DIR/overcast-corners/build.sh" ]]; then
         note "building the rounded-corners KWin effect (KDE-Rounded-Corners; needs network)"
         "$OVERCAST_DIR/overcast-corners/build.sh"
+    fi
+    if [[ -x "$OVERCAST_DIR/overcast-style/build.sh" ]]; then
+        # kdeglobals (from kde-restore.sh) selects it: widgetStyle=Overcast
+        note "building the app style (Qt style plugin over Breeze; Qt only)"
+        "$OVERCAST_DIR/overcast-style/build.sh"
     fi
 else
     step "4/8 build: skipped (--no-build)"

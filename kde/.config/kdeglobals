@@ -150,6 +150,7 @@ Theme=Overcast
 LookAndFeelPackage=Nothing
 contrast=4
 frameContrast=0.2
+widgetStyle=Overcast
 
 [KFileDialog Settings]
 Allow Expansion=false
