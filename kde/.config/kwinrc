@@ -20,15 +20,12 @@ NightTemperature=6500
 [Plugins]
 desktopchangeosdEnabled=false
 diminactiveEnabled=true
-fadeEnabled=false
-glideEnabled=true
+fadeEnabled=true
 krohnkiteEnabled=true
 kwin4_effect_shapecornersEnabled=true
 kzonesEnabled=false
-magiclampEnabled=false
-overcast_makewayEnabled=true
+overcast_makewayEnabled=false
 scaleEnabled=false
-squashEnabled=true
 wobblywindowsEnabled=true
 
 [Round-Corners]
@@ -43,7 +40,7 @@ InactiveOutlineThickness=1
 InactiveSecondOutlineThickness=0
 OutlineColor=#50565c
 OutlineThickness=1
-SecondOutlineColor=#4adcff
+SecondOutlineColor=#ffb84a
 SecondOutlineThickness=3
 Size=10
 UseNativeDecorationShadows=true
