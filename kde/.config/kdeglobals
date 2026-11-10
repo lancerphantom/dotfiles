@@ -141,7 +141,10 @@ TerminalService=kitty.desktop
 XftAntialias=true
 XftHintStyle=hintslight
 XftSubPixel=rgb
-font=Noto Sans,12,-1,5,400,0,0,0,0,0,0,0,0,0,0,1
+font=Barlow,12.5,-1,5,400,0,0,0,0,0,0,0,0,0,0,1
+menuFont=Barlow,10.5,-1,5,400,0,0,0,0,0,0,0,0,0,0,1
+smallestReadableFont=Barlow,9,-1,5,400,0,0,0,0,0,0,0,0,0,0,1
+toolBarFont=Barlow,10.5,-1,5,400,0,0,0,0,0,0,0,0,0,0,1
 
 [Icons]
 Theme=Overcast
@@ -174,6 +177,7 @@ View Style=DetailTree
 Theme=freedesktop
 
 [WM]
+activeFont=Barlow,10.5,-1,5,400,0,0,0,0,0,0,0,0,0,0,1
 activeBackground=28,28,28
 activeBlend=28,28,28
 activeForeground=214,214,214
