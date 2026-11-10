@@ -60,6 +60,7 @@ screenGapLeft=2
 threeColumnLayoutOrder=1
 tileLayoutInitialRotationAngle=3
 tileLayoutOrder=2
+tiledWindowsLayer=1
 
 [Script-kzones]
 zoneOverlayIndicatorDisplay=1
