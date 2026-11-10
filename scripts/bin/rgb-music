@@ -78,7 +78,7 @@ def locked():
                           "--object-path", "/ScreenSaver", "--method", "org.freedesktop.ScreenSaver.GetActive"])
 
 cli = OpenRGBClient("127.0.0.1", 6742, "rgb-music")
-board = cli.devices[1]
+board = next(d for d in cli.devices if "b550m" in d.name.lower())   # by name: device numbers change between boots
 
 cava = subprocess.Popen(["cava", "-p", str(CAVA_CONF)], stdout=subprocess.PIPE, text=True, bufsize=1)
 active, last_check, last_art = False, 0.0, None
@@ -93,7 +93,7 @@ for line in cava.stdout:
         want = playing and not locked()
         if want and not active:
             active, last_art = True, None
-            subprocess.run(["openrgb", "-d", "1", "--mode", "direct"],
+            subprocess.run(["openrgb", "-d", "B550M", "--mode", "direct"],
                            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         elif not want and active:
             active = False

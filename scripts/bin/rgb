@@ -5,6 +5,7 @@
 #   fans: channel reorder | keyboard: white balance | RAM: ramfx effect if set
 KB_WB="1.0 0.565 0.439"
 OV=~/.cache/rgb-devcolours
+RAM_DEV="Vengeance" FAN_DEV="B550M" KB_DEV="Apex 3"   # OpenRGB device names (their numbers change between boots)
 declare -A C=(
   [red]=FF0000 [orange]=FF5500 [amber]=FFAA00 [yellow]=FFFF00 [lime]=AAFF00
   [green]=00FF00 [mint]=00FF88 [teal]=00FFCC [cyan]=00FFFF [sky]=00AAFF
@@ -73,9 +74,9 @@ if [[ $c != 000000 && -z ${ov[ram]} && -s ~/.cache/rgb-ram ]]; then
   ramargs=(--mode "$rmode"); [[ -n $rcol ]] && ramargs+=(--color "$rcol")
 fi
 
-openrgb -d 0 "${ramargs[@]}" \
-        -d 1 --mode direct --color "${fan:4:2}${fan:0:2}${fan:2:2}" \
-        -d 3 --mode direct --color "$kb" >/dev/null 2>&1
+openrgb -d "$RAM_DEV" "${ramargs[@]}" \
+        -d "$FAN_DEV" --mode direct --color "${fan:4:2}${fan:0:2}${fan:2:2}" \
+        -d "$KB_DEV" --mode direct --color "$kb" >/dev/null 2>&1
 
 # mouse: 5 arc zones + logo (wallpaper gradient across the arc when there is one)
 if [[ -z ${ov[mouse]} && $kbraw == *,* && $c != 000000 ]]; then
