@@ -11,6 +11,7 @@
 # --- Plasma, KWin, shortcuts, apps -----------------------------------------
 .config/kdeglobals
 .config/kwinrc
+.config/kwinrulesrc
 .config/kglobalshortcutsrc
 .config/kscreenlockerrc
 .config/kcminputrc

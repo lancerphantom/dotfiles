@@ -1,0 +1,12 @@
+[General]
+Order=overcast-brave-tiled
+
+[overcast-brave-tiled]
+Description=Overcast: Brave opens tiled, not maximised
+maximizehoriz=false
+maximizehorizrule=3
+maximizevert=false
+maximizevertrule=3
+types=1
+wmclass=brave
+wmclassmatch=2
