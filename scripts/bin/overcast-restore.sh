@@ -131,6 +131,10 @@ if (( build )); then
         note "building the rounded-corners KWin effect (KDE-Rounded-Corners; needs network)"
         "$OVERCAST_DIR/overcast-corners/build.sh"
     fi
+    if [[ -x "$OVERCAST_DIR/fonts/install.sh" ]]; then
+        # Motivate (accent font, personal-use licence: not in git) from motivate.zip
+        "$OVERCAST_DIR/fonts/install.sh" || note "accent font Motivate missing: clocks and headings use the UI font until fonts/install.sh runs"
+    fi
     if [[ -x "$OVERCAST_DIR/overcast-style/build.sh" ]]; then
         # kdeglobals (from kde-restore.sh) selects it: widgetStyle=Overcast
         note "building the app style (Qt style plugin over Breeze; Qt only)"
