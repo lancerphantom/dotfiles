@@ -49,6 +49,7 @@ UseSquircleShape=false
 [Script-krohnkite]
 columnsLayoutEnabled=false
 columnsLayoutInitialRotationAngle=3
+floatedWindowsLayer=2
 monocleLayoutEnabled=false
 monocleLayoutOrder=3
 monocleMaximize=false

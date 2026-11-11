@@ -1,5 +1,5 @@
 [General]
-Order=overcast-brave-tiled
+Order=overcast-brave-tiled,overcast-spectacle-above
 
 [overcast-brave-tiled]
 Description=Overcast: Brave opens tiled, not maximised
@@ -10,3 +10,11 @@ maximizevertrule=3
 types=1
 wmclass=brave
 wmclassmatch=2
+
+[overcast-spectacle-above]
+Description=Overcast: Spectacle stays above tiled windows
+above=true
+aboverule=3
+types=1
+wmclass=org.kde.spectacle
+wmclassmatch=1
