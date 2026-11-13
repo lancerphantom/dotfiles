@@ -49,10 +49,30 @@ gradient() {
 CFG=~/.config/plasma-org.kde.plasma.desktop-appletsrc
 
 current_img() {
-  if [[ $(grep -m1 '^wallpaperplugin=' "$CFG" | cut -d= -f2) == org.kde.potd ]]; then
+  # Find the desktop actually on screen: the non-panel containment on screen 0,
+  # preferring the current activity. Then use its wallpaper plugin and image.
+  local act info wp img
+  act=$( { qdbus6 org.kde.ActivityManager /ActivityManager/Activities CurrentActivity ||
+           qdbus  org.kde.ActivityManager /ActivityManager/Activities CurrentActivity; } 2>/dev/null )
+  info=$(awk -v act="$act" '
+    /^\[Containments\]\[[0-9]+\]$/ { match($0,/[0-9]+/); id=substr($0,RSTART,RLENGTH); sec="c"; next }
+    /^\[Containments\]\[[0-9]+\]\[Wallpaper\]\[org\.kde\.image\]\[General\]$/ {
+      match($0,/[0-9]+/); id=substr($0,RSTART,RLENGTH); sec="img"; next }
+    /^\[/ { sec=""; next }
+    sec=="c"   && /^wallpaperplugin=/ { wp[id]=substr($0,17) }
+    sec=="c"   && /^lastScreen=/      { ls[id]=substr($0,12) }
+    sec=="c"   && /^activityId=/      { ac[id]=substr($0,12) }
+    sec=="c"   && /^plugin=/          { pl[id]=substr($0,8) }
+    sec=="img" && /^Image=/           { im[id]=substr($0,7) }
+    END { for (i in wp) { if (pl[i] ~ /panel/ || ls[i] != "0") continue
+                          sc = (act != "" && ac[i] == act) ? 2 : 1
+                          if (sc > bs) { bs = sc; best = i } }
+          if (best != "") print wp[best] "\t" im[best] }' "$CFG")
+  wp=${info%%$'\t'*}; img=${info#*$'\t'}; img=${img#file://}
+  if [[ $wp == org.kde.potd || ! -f $img ]]; then       # Picture of the Day, or image missing
     ls -t "$POTD"/* 2>/dev/null | grep -viE '\.(json|txt)$' | head -1
   else
-    local i; i=$(grep -m1 '^Image=' "$CFG" | cut -d= -f2-); echo "${i#file://}"
+    echo "$img"
   fi
 }
 
