@@ -5,8 +5,11 @@
 # VS Code and in the F12 drop-down terminal (OVERCAST_QUICK). The old painting + fastfetch
 # greeting is still there by hand: fastfetch -c ~/.local/share/overcast/terminal/fastfetch.jsonc
 _ov=~/.local/share/overcast/terminal
-# Pending updates: re-counted in the background at most once an hour.
+# Pending updates: re-counted in the background at most once an hour, and at once after
+# packages were installed (pacman's database is newer than the count; the old number is
+# dropped so the greeting says "checking…" instead of showing it).
 _upd=~/.cache/overcast/updates
+[[ -f $_upd && /var/lib/pacman/local -nt $_upd ]] && rm -f $_upd
 if [[ ! -f $_upd || -n $(find $_upd -mmin +60 2>/dev/null) ]] && (( $+commands[checkupdates] )); then
   mkdir -p ${_upd:h}
   ( n=$(checkupdates 2>/dev/null | wc -l) && print $n > $_upd.tmp && mv $_upd.tmp $_upd ) &!
