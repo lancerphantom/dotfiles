@@ -506,7 +506,7 @@ Things to confirm rather than assume:
 - Hyprland/HyDE-era packages are still listed (`waybar`, `wlogout`, `fuzzel`,
   `foot`, `grim`, `slurp`, `cliphist`, `grub`, `grub2-theme-preview`).
 - `~/projects` is not backed up anywhere — that now includes `rgb-lights`. Overcast is covered once it's
-  pushed to GitHub; ChessLens, raudioviz, the subtitle app and the Kerala
+  pushed to GitHub; ChessLens, raudioviz and the Kerala
   dashboard still live on one disk with no snapshots.
 
 ## Decided (2026-10-26)
