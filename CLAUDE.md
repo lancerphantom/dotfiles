@@ -19,6 +19,7 @@ Read both before changing install order, drivers, boot or /etc config.
 - Package lists: packages.txt (pacman -Qqe), aur-packages.txt (pacman -Qqm), flatpak-apps.txt. Regenerated manually.
 - capture-system-state.sh writes state/*.txt and copies an /etc allowlist, with a deny-list for secrets.
 - Overcast (icon theme, dock widget, Nothing-Floating Plasma style) is a separate repo at ~/projects/claudeCode/kdeCons, pinned in overcast/overcast.conf.
+- RGB lighting (rgb*, ramfx, mousefx, ~/.config/rgb-fx, openrgb/rgb-* user units) is a separate repo at ~/projects/claudeCode/rgb-lights, set up by its install.sh. .zshrc only sources its shell/rgb.zsh.
 
 ## Rules
 - Never commit secrets: ~/.config/secrets/, ~/.config/gh, ~/.ssh, ~/.gnupg stay out. The commit guard in githooks/ enforces this.

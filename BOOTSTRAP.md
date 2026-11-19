@@ -355,6 +355,23 @@ or enabled.
 
 Anything listed as `masked` was switched off on purpose. Leave it that way.
 
+### RGB lighting — separate repo
+
+The RGB scripts, effects and their user units (`openrgb`, `rgb-*`) moved out of
+this repo on 2026-11-19 into `~/projects/claudeCode/rgb-lights` (local only,
+not on GitHub yet: copy it over from the old disk). After step 7 (`~/bin` on
+PATH) and step 4 (`openrgb-git` and the rest from the package lists):
+
+```bash
+cd ~/projects/claudeCode/rgb-lights
+./install.sh -n && ./install.sh   # links ~/bin/rgb*, ~/.config/rgb-fx; copies the units
+```
+
+It prints what's left: the Python venv, three sudo steps (udev rule for the
+mouse, `i2c-dev`, `acpi_enforce_resources=lax`) and `rgbmode wallpaper` to
+enable the services. `.zshrc` already sources the repo's `shell/rgb.zsh` and
+skips it while the repo is absent.
+
 ## 14. Assets — not in this repo
 
 Deliberately excluded, and several things stay broken until these are back:
@@ -478,12 +495,11 @@ Things to confirm rather than assume:
   nothing under KDE.
 - `/usr/local/bin/plymouth-theme-rotate` and the three Plymouth themes aren't
   captured anywhere (step 12).
-- `sddm-astronaut-theme`, `zoxide`, `openrgb` and the Bibata cursor theme aren't in either package list. Some may have been
-  installed another way; the `rgb*` scripts need OpenRGB and the shell needs
-  zoxide.
+- `sddm-astronaut-theme`, `zoxide` and the Bibata cursor theme aren't in either package list. Some may have been
+  installed another way; the shell needs zoxide.
 - Hyprland/HyDE-era packages are still listed (`waybar`, `wlogout`, `fuzzel`,
   `foot`, `grim`, `slurp`, `cliphist`, `grub`, `grub2-theme-preview`).
-- `~/projects` is not backed up anywhere. Overcast is covered once it's
+- `~/projects` is not backed up anywhere — that now includes `rgb-lights`. Overcast is covered once it's
   pushed to GitHub; ChessLens, raudioviz, the subtitle app and the Kerala
   dashboard still live on one disk with no snapshots.
 
