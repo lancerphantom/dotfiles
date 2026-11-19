@@ -10,7 +10,7 @@ setopt() { [[ -f $SET ]] || printf 'colour = chosen\npalette = harmony\n' > "$SE
            if grep -q "^[[:space:]]*$1[[:space:]]*=" "$SET"; then sed -i --follow-symlinks "s|^[[:space:]]*$1[[:space:]]*=[^#]*|$1 = $2    |" "$SET"
            else echo "$1 = $2" >> "$SET"; fi; }
 wall_for_fx() { if [[ $(fxset colour) == wallpaper || $(fxset palette) == wallpaper ]]; then
-                  svc enable --now rgb-wallpaper; [[ -s ~/.cache/rgb-wall ]] || svc restart rgb-wallpaper; fi; }
+                  svc enable --now rgb-wallpaper; fi; }
 
 case "${1:-status}" in
   auto)
