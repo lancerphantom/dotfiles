@@ -178,17 +178,20 @@ chsh -s /usr/bin/zsh
 
 ```bash
 cd ~/dotfiles
-stow --simulate zsh     # dry run first, always
-stow zsh git kitty fastfetch scripts konsole
+stow --simulate --no-folding zsh git kitty fastfetch scripts konsole   # dry run first, always
+stow --no-folding zsh git kitty fastfetch scripts konsole
 ```
+
+`--no-folding` makes stow link each file, never a whole directory. Without
+it, `~/bin` could become one symlink into this repo, and rgb-lights'
+`install.sh` would then drop its links inside `~/dotfiles/scripts/bin/`.
 
 Conflicts mean a real file exists where a symlink should go. Move it aside
 (`mv ~/.foo ~/.foo.bak`) and re-run.
 
 `scripts` symlinks into `~/bin/` — make sure that's on `PATH` (it's set in
 `.zprofile`, which stow just placed, so this resolves after a re-login). After
-adding a script to `scripts/bin/` later, re-run `stow -R scripts` if `~/bin`
-isn't a single symlink to the repo directory.
+adding a script to `scripts/bin/` later, re-run `stow -R --no-folding scripts`.
 
 **Do not stow `kde`, `kde-configs`, `overcast`, `githooks`, `sddm`, `systemd`, or `etc`.**
 Those are copy-based or repo-only.
