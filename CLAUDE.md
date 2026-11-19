@@ -19,8 +19,14 @@ Read both before changing install order, drivers, boot or /etc config.
 - /etc files live under etc/ as copies. Installing them needs sudo: give me the command, don't run sudo yourself.
 - Package lists: packages.txt (pacman -Qqe), aur-packages.txt (pacman -Qqm), flatpak-apps.txt. Regenerated manually.
 - capture-system-state.sh writes state/*.txt and copies an /etc allowlist, with a deny-list for secrets.
-- Overcast (icon theme, dock widget, Nothing-Floating Plasma style) is a separate repo at ~/projects/claudeCode/kdeCons, pinned in overcast/overcast.conf.
-- RGB lighting (rgb*, ramfx, mousefx, ~/.config/rgb-fx, openrgb/rgb-* user units) is a separate repo at ~/projects/claudeCode/rgb-lights, set up by its install.sh. .zshrc only sources its shell/rgb.zsh. Optional module, pinned in rgb/rgb.conf (not stowed).
+
+## Linked projects
+- Overcast (~/projects/claudeCode/kdeCons: icon theme, dock widget, Nothing-Floating Plasma style) is pinned in overcast/overcast.conf and installed by overcast-restore.sh.
+  kitty.conf, .zshrc and kdeglobals/kwinrc/kwinrulesrc/kcminputrc/ksplashrc/appletsrc reference Overcast component names.
+  Renaming anything in Overcast means updating these. kde-restore.sh --no-overcast is the fallback for a machine without it.
+- rgb-lights (~/projects/claudeCode/rgb-lights: rgb*, ramfx, mousefx, ~/.config/rgb-fx, openrgb/rgb-* user units) is an optional module,
+  pinned in rgb/rgb.conf and set up by its own install.sh. .zshrc:149 sources its shell/rgb.zsh.
+- Never commit files owned by those repos. Stow with --no-folding (rgb-lights also links into ~/bin).
 
 ## Rules
 - Never commit secrets: ~/.config/secrets/, ~/.config/gh, ~/.ssh, ~/.gnupg stay out. The commit guard in githooks/ enforces this.
