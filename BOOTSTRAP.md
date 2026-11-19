@@ -190,7 +190,7 @@ Conflicts mean a real file exists where a symlink should go. Move it aside
 adding a script to `scripts/bin/` later, re-run `stow -R scripts` if `~/bin`
 isn't a single symlink to the repo directory.
 
-**Do not stow `kde`, `kde-configs`, `overcast`, `githooks`, `sddm`, or `etc`.**
+**Do not stow `kde`, `kde-configs`, `overcast`, `githooks`, `sddm`, `systemd`, or `etc`.**
 Those are copy-based or repo-only.
 
 Never use `stow --adopt` here: it moves existing files from `$HOME` into the
@@ -341,11 +341,17 @@ when absent:
 
 ```bash
 systemctl enable paccache.timer                    # keeps root from filling up
+install -Dm644 -t ~/.config/systemd/user ~/dotfiles/systemd/user/*   # copies, not links
 systemctl --user enable organize-downloads.timer
 # sddm-theme-cycle.service — enabled by sddm/install.sh (step 11)
 # overcast-refresh.path/.service, overcast-tasks-check.service — enabled by
 #   overcast-restore.sh (step 9)
 ```
+
+User units are copied, never stowed or symlinked: `systemctl disable` deletes
+a unit file that is a symlink pointing outside `~/.config/systemd/user`.
+After editing one in `systemd/user/`, copy it again and run
+`systemctl --user daemon-reload`.
 
 Without the Overcast units the icons stop following the wallpaper and the dock
 goes empty after the next Plasma update — both silently.

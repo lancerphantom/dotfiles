@@ -12,7 +12,8 @@ Read both before changing install order, drivers, boot or /etc config.
 
 ## How the repo is wired
 - Stow packages: zsh, git, kitty, fastfetch, scripts, konsole. These are symlinked, so editing them in the repo edits the live config.
-- NOT stowed: kde, kde-configs, overcast, githooks, sddm, etc. These are copy-based or repo-only.
+- NOT stowed: kde, kde-configs, overcast, githooks, sddm, systemd, etc. These are copy-based or repo-only.
+- systemd/user/ holds user units, installed as copies (BOOTSTRAP step 13). Never stow or symlink a unit: `systemctl disable` deletes a unit file that is a symlink pointing outside the search path.
 - KDE configs are copies because KDE writes files atomically and breaks symlinks. kde/manifest.txt lists them.
   kde-save.sh copies live → repo. kde-restore.sh copies repo → live and must run from a TTY with Plasma stopped.
 - /etc files live under etc/ as copies. Installing them needs sudo: give me the command, don't run sudo yourself.
