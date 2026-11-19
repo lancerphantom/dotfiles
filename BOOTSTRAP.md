@@ -364,14 +364,20 @@ Anything listed as `masked` was switched off on purpose. Leave it that way.
 ### RGB lighting — separate repo
 
 The RGB scripts, effects and their user units (`openrgb`, `rgb-*`) moved out of
-this repo on 2026-11-19 into `~/projects/claudeCode/rgb-lights` (local only,
-not on GitHub yet: copy it over from the old disk). After step 7 (`~/bin` on
+this repo on 2026-11-19 into its own private repo, `lancerphantom/rgb-lights`.
+It's optional: skip this step on a machine without the RGB hardware.
+`rgb/rgb.conf` pins the path, clone URL and commit. After step 7 (`~/bin` on
 PATH) and step 4 (`openrgb-git` and the rest from the package lists):
 
 ```bash
-cd ~/projects/claudeCode/rgb-lights
+source ~/dotfiles/rgb/rgb.conf
+git clone "$RGB_REPO" "$RGB_DIR" && git -C "$RGB_DIR" checkout "$RGB_REF"
+cd "$RGB_DIR"
 ./install.sh -n && ./install.sh   # links ~/bin/rgb*, ~/.config/rgb-fx; copies the units
 ```
+
+The checkout leaves a detached HEAD at the tested commit. Run
+`git -C "$RGB_DIR" switch main` before working in it.
 
 It prints what's left: the Python venv, three sudo steps (udev rule for the
 mouse, `i2c-dev`, `acpi_enforce_resources=lax`) and `rgbmode wallpaper` to
@@ -505,8 +511,8 @@ Things to confirm rather than assume:
   installed another way; the shell needs zoxide.
 - Hyprland/HyDE-era packages are still listed (`waybar`, `wlogout`, `fuzzel`,
   `foot`, `grim`, `slurp`, `cliphist`, `grub`, `grub2-theme-preview`).
-- `~/projects` is not backed up anywhere — that now includes `rgb-lights`. Overcast is covered once it's
-  pushed to GitHub; ChessLens, raudioviz and the Kerala
+- `~/projects` is not backed up anywhere. Overcast and `rgb-lights` are on
+  GitHub; ChessLens, raudioviz and the Kerala
   dashboard still live on one disk with no snapshots.
 
 ## Decided (2026-10-26)
