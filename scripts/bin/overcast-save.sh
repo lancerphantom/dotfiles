@@ -11,6 +11,7 @@
 #   - the installed systemd units and env script match the Overcast project's copies
 #   - the Overcast checkout has no uncommitted changes (the pin wouldn't cover them)
 #   - other local launchers that use an Overcast icon but aren't listed
+#     (and that no other restore step brings back with their icon)
 #
 # The Overcast project is the source of truth for its units and env script;
 # they are not copied into dotfiles. Review with: git -C ~/dotfiles diff -- overcast
@@ -74,7 +75,13 @@ while IFS=$'\t' read -r desktop icon; do
 done < <(read_map "$CONF_DIR/launcher-icons.tsv")
 mv -f "$tmp" "$CONF_DIR/launcher-icons.tsv"
 
-# Unlisted launchers that use an icon Overcast draws.
+# Unlisted launchers that use an icon Overcast draws. Skipped, since a restore
+# keeps their icon anyway:
+#   - Overcast's own copies (X-Overcast-Hidden/-Icon): apps/hide_apps.py remakes them
+#   - launchers in kde/manifest.txt: kde-restore.sh copies them whole
+#   - launchers whose icon is the system launcher's: the icon theme covers it
+manifest_apps=$(sed -n 's|^\.local/share/applications/\([^[:space:]#]*\.desktop\).*|\1|p' \
+                "$DOTFILES/kde/manifest.txt" 2>/dev/null || true)
 if [[ -d "$OVERCAST_DIR/templates/apps" && -d "$apps" ]]; then
     for f in "$apps"/*.desktop; do
         [[ -f "$f" ]] || continue
@@ -82,6 +89,14 @@ if [[ -d "$OVERCAST_DIR/templates/apps" && -d "$apps" ]]; then
         printf '%s\n' "${listed[@]}" | grep -qxF "$name" && continue
         icon=$(get_icon "$f")
         [[ -n "$icon" && -f "$OVERCAST_DIR/templates/apps/$icon.svg" ]] || continue
+        grep -qE '^X-Overcast-(Hidden|Icon)=true' "$f" && continue
+        grep -qxF "$name" <<< "$manifest_apps" && continue
+        sys=""
+        IFS=: read -r -a data_dirs <<< "${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"
+        for d in "${data_dirs[@]}"; do
+            if [[ -f "$d/applications/$name" ]]; then sys=$(get_icon "$d/applications/$name"); break; fi
+        done
+        [[ -n "$sys" && "$sys" == "$icon" ]] && continue
         exec_line=$(awk -F= '/^Exec=/ { print $2; exit }' "$f")
         bin="${exec_line%% *}"; bin="${bin//\"/}"
         if [[ "$bin" == /* && ! -e "$bin" ]]; then

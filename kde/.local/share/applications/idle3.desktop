@@ -1,0 +1,18 @@
+[Desktop Entry]
+Categories=Development;Education;
+Comment[en_US]=Python Integrated Development and Learning Environment
+Comment=Python Integrated Development and Learning Environment
+Exec=idle3
+GenericName[en_US]=
+GenericName=
+Icon=idle3
+MimeType=
+Name[en_US]=Python IDLE
+Name=Python IDLE
+Path=
+StartupNotify=true
+Terminal=false
+TerminalOptions=
+Type=Application
+X-KDE-SubstituteUID=false
+X-KDE-Username=

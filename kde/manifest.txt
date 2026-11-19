@@ -50,6 +50,8 @@
 #   starts ~/bully.sh
 .local/share/applications/antigravity.desktop
 #   starts /opt/antigravity/antigravity
+.local/share/applications/idle3.desktop
+#   Python IDLE: Arch's python package ships no launcher for it
 
 # --- Deliberately NOT tracked ----------------------------------------------
 # .config/kwinoutputconfig.json   monitor layout; specific to these screens.
