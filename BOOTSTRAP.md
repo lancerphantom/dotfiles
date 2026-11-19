@@ -288,6 +288,21 @@ they can't drift. The restore:
 
 `--force` skips the checks if you know better.
 
+**On a machine without Overcast** (no access to the private repo, or a plain
+desktop wanted), skip step 9 and run
+
+```bash
+~/bin/kde-restore.sh --no-overcast
+```
+
+It leaves out the panel layout (`plasmarc`, `plasmashellrc`, the appletsrc):
+that layout is Overcast's own launcher, dock, notifications and clock on
+invisible panels, so Plasma makes its default panel instead. Everything else
+is restored, with Overcast's names swapped for stock ones in a temporary copy
+(the repo stays as it is): Breeze Dark colours and global theme, Breeze Dark
+icons, Breeze app style, Breeze cursor, splash and window decoration, rounded
+corners off. To get Overcast later: step 9, then a plain `kde-restore.sh`.
+
 The panel files (`plasmashellrc`, `plasma-org.kde.plasma.desktop-appletsrc`)
 use containment and applet IDs and screen numbers from this machine. Restored
 together on the same screen setup they work; on a different monitor layout,

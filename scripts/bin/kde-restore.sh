@@ -9,10 +9,13 @@
 # style and the Overcast Tasks widget, and this script refuses to restore them
 # until those exist.
 #
-#   kde-restore.sh             check, back up, restore
-#   kde-restore.sh --check     only run the checks
-#   kde-restore.sh --dry-run   show what would be copied
-#   kde-restore.sh --force     skip the Plasma-running and dependency checks
+#   kde-restore.sh               check, back up, restore
+#   kde-restore.sh --check       only run the checks
+#   kde-restore.sh --dry-run     show what would be copied
+#   kde-restore.sh --force       skip the Plasma-running and dependency checks
+#   kde-restore.sh --no-overcast for a machine without Overcast: skip the panel
+#                                layout (Plasma makes its default panel) and
+#                                restore the rest with stock Breeze names
 #
 # Live files that differ are backed up to ~/.local/state/kde-restore/<time>/.
 set -euo pipefail
@@ -26,13 +29,14 @@ DENY='(^|/)\.config/(gh|secrets)(/|$)|(^|/)\.(ssh|gnupg)(/|$)|(^|/)\.local/share
 XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
 BACKUP="${XDG_STATE_HOME:-$HOME/.local/state}/kde-restore/$(date +%Y%m%d-%H%M%S)"
 
-mode=restore force=0
+mode=restore force=0 no_overcast=0
 for arg in "$@"; do
     case "$arg" in
         --check) mode=check ;;
         --dry-run) mode=dry ;;
         --force) force=1 ;;
-        -h|--help) sed -n '2,17p' "$0"; exit 0 ;;
+        --no-overcast) no_overcast=1 ;;
+        -h|--help) sed -n '2,20p' "$0"; exit 0 ;;
         *) echo "unknown option: $arg" >&2; exit 2 ;;
     esac
 done
@@ -45,6 +49,41 @@ while IFS= read -r rel; do
     if [[ "$rel" =~ $DENY ]]; then echo "REFUSED (credentials): $rel"; continue; fi
     if [[ -n "$rel" ]]; then entries+=("$rel"); fi
 done < "$MANIFEST"
+
+# --no-overcast: the panel layout is built from Overcast's own widgets
+# (launcher, dock, notifications, clock) on invisible Nothing-Floating panels;
+# with stock parts swapped in it would be neither Overcast nor Plasma's
+# default, so it is left out and Plasma creates its default panel at login.
+# Everything else (shortcuts, window rules, input, launchers, app settings)
+# is restored from a staged copy in which every Overcast name is replaced by
+# the stock Breeze one. Later, with Overcast built, a plain run restores all.
+LAYOUT='^\.config/(plasmarc|plasmashellrc|plasma-org\.kde\.plasma\.desktop-appletsrc)$'
+if (( no_overcast )); then
+    command -v kwriteconfig6 > /dev/null || { echo "error: --no-overcast needs kwriteconfig6 (kconfig)" >&2; exit 1; }
+    STAGE=$(mktemp -d)
+    trap 'rm -rf "$STAGE"' EXIT
+    cp -a "$SRC/." "$STAGE"
+    SRC="$STAGE"
+    kset() { [[ -f "$SRC/.config/$1" ]] && kwriteconfig6 --file "$SRC/.config/$1" --group "$2" --key "$3" "${@:4}"; true; }
+    kset kdeglobals General ColorScheme BreezeDark
+    kset kdeglobals General ColorSchemeHash --delete
+    kset kdeglobals Icons Theme breeze-dark
+    kset kdeglobals KDE LookAndFeelPackage org.kde.breezedark.desktop
+    kset kdeglobals KDE widgetStyle Breeze
+    kset kcminputrc Mouse cursorTheme breeze_cursors
+    kset ksplashrc KSplash Theme org.kde.breeze.desktop
+    kset kwinrc org.kde.kdecoration2 library org.kde.breeze
+    kset kwinrc org.kde.kdecoration2 theme Breeze
+    kset kwinrc Plugins kwin4_effect_shapecornersEnabled false
+    kept=()
+    for rel in "${entries[@]}"; do
+        if [[ "$rel" =~ $LAYOUT ]]; then rm -f "$SRC/$rel"; else kept+=("$rel"); fi
+    done
+    entries=("${kept[@]}")
+    echo "==> --no-overcast: panel layout skipped (Plasma's default panel); Breeze icons, style,"
+    echo "    colours, cursor, splash and window decoration instead of Overcast's"
+    echo
+fi
 
 # ini_get FILE GROUP KEY — read one value from a KDE-style ini file.
 ini_get() {
@@ -74,7 +113,8 @@ if [[ -f "$SRC/.config/kdeglobals" ]]; then
                                              "$HOME/.icons/$icons/index.theme" \
                                              "/usr/share/icons/$icons/index.theme"; then
         if [[ "$icons" == Overcast ]]; then
-            err "icon theme Overcast is not built yet — run overcast-restore.sh first"
+            err "icon theme Overcast is not built yet — run overcast-restore.sh first
+         (or --no-overcast on a machine that won't have Overcast)"
         else
             err "icon theme '$icons' is not installed"
         fi

@@ -262,7 +262,8 @@ forgotten:
 - **Panel configs depend on Overcast, not the other way round.** Restoring
   `plasmarc` / the panel layout before Overcast is built gives Breeze with
   opaque panels and a "widget not found" dock. `kde-restore.sh` refuses to run
-  in that state.
+  in that state. On a machine that won't have Overcast,
+  `kde-restore.sh --no-overcast` skips the layout and uses stock Breeze names.
 
 Change panels with plasmashell stopped or through its scripting API — a
 running plasmashell rewrites its config on exit.
