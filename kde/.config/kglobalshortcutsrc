@@ -8,6 +8,8 @@ Switch to Next Keyboard Layout=Meta+Alt+K,Meta+Alt+K,Switch to Next Keyboard Lay
 _k_friendly_name=Keyboard Layout Switcher
 
 [com.anthropic.Claude]
+0A79C6D19C79E74C811846F487AEAE72-Ctrl+Alt+Space=none,Ctrl+Alt+Space,Claude shortcut: Ctrl+Alt+Space
+3ECE08C5252A5E1EC2477466D1DF1961-Ctrl+Alt+Space=none,Ctrl+Alt+Space,Claude shortcut: Ctrl+Alt+Space
 89ED111B63AD5C46CEEF6BC16FD696C6-Ctrl+Alt+Space=none,Ctrl+Alt+Space,Claude shortcut: Ctrl+Alt+Space
 _k_friendly_name=Claude
 
@@ -78,6 +80,7 @@ KrohnkiteFocusRight=Meta+L,none,Krohnkite: Focus Right
 KrohnkiteFocusUp=Meta+K,none,Krohnkite: Focus Up
 KrohnkiteGrowHeight=Meta+Ctrl+J,none,Krohnkite: Grow Height
 KrohnkiteIncrease=Meta+I,none,Krohnkite: Increase
+KrohnkiteLayoutChooser=none,none,Krohnkite: Layout Chooser
 KrohnkiteLowerSurfaceCapacity=none,none,Krohnkite: Lower Surface Capacity
 KrohnkiteMeta=none,none,Krohnkite: Alter Register
 KrohnkiteMonocleLayout=none,none,Krohnkite: Select Layout - Monocle
@@ -268,33 +271,33 @@ view_zoom_out=Meta+-,Meta+-,Zoom Out
 
 [kwin][$InverseAction]
 Cycle Overview Opposite=Cycle Overview
-Increase Opacity=Decrease Opacity
-MoveZoomLeft=MoveZoomRight
-MoveZoomUp=MoveZoomDown
-Switch One Desktop Down=Switch One Desktop Up
+Decrease Opacity=Increase Opacity
+MoveZoomDown=MoveZoomUp
+MoveZoomRight=MoveZoomLeft
+Switch One Desktop Up=Switch One Desktop Down
 Switch One Desktop to the Right=Switch One Desktop to the Left
-Switch Window Left=Switch Window Right
+Switch Window Right=Switch Window Left
 Switch Window Up=Switch Window Down
-Switch to Next Screen=Switch to Previous Screen
-Switch to Previous Desktop=Switch to Next Desktop
+Switch to Next Desktop=Switch to Previous Desktop
+Switch to Previous Screen=Switch to Next Screen
 Switch to Screen Above=Switch to Screen Below
-Switch to Screen to the Left=Switch to Screen to the Right
+Switch to Screen to the Right=Switch to Screen to the Left
 Walk Through Windows=Walk Through Windows (Reverse)
-Walk Through Windows Alternative (Reverse)=Walk Through Windows Alternative
+Walk Through Windows Alternative=Walk Through Windows Alternative (Reverse)
 Walk Through Windows of Current Application (Reverse)=Walk Through Windows of Current Application
-Walk Through Windows of Current Application Alternative=Walk Through Windows of Current Application Alternative (Reverse)
-Window Lower=Window Raise
+Walk Through Windows of Current Application Alternative (Reverse)=Walk Through Windows of Current Application Alternative
+Window Grow Horizontal=Window Shrink Horizontal
 Window One Desktop Down=Window One Desktop Up
 Window One Desktop to the Right=Window One Desktop to the Left
 Window One Screen Up=Window One Screen Down
 Window One Screen to the Left=Window One Screen to the Right
 Window Pack Down=Window Pack Up
-Window Pack Right=Window Pack Left
-Window Shrink Horizontal=Window Grow Horizontal
+Window Pack Left=Window Pack Right
+Window Raise=Window Lower
 Window Shrink Vertical=Window Grow Vertical
 Window to Previous Desktop=Window to Next Desktop
 Window to Previous Screen=Window to Next Screen
-view_zoom_in=view_zoom_out
+view_zoom_out=view_zoom_in
 
 [mediacontrol]
 _k_friendly_name=Media Controller
@@ -384,9 +387,6 @@ toggle do not disturb=none,none,Toggle do not disturb
 
 [services][net.local.bash.desktop]
 _launch=Meta+`
-
-[services][net.local.kitty-dropdown.desktop]
-_launch=F12
 
 [services][systemsettings.desktop]
 _launch=Tools
