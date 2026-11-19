@@ -164,16 +164,21 @@ subs-bg() {
   ( cd "$SUBTITLE_DIR" &&
     setsid .venv-onnx/bin/python server/subtitled.py --quiet-text "$@" \
       </dev/null >/dev/null 2>&1 & )
-  # Model load takes a few seconds; wait for the port rather than lying.
+  # The port cannot open until the MT model is loaded AND warmed: subtitled.py
+  # builds the session before it binds the socket. A cold qwen load is ~1.2 GB
+  # off disk and has taken over 40s, which made the old 40s wait report a
+  # failure while the server was in fact coming up fine. Wait generously.
   local i
-  for i in {1..40}; do
+  for i in {1..120}; do
     sleep 1
     if ss -ltn 2>/dev/null | grep -q ':43007 '; then
       print "subtitle server: listening on :43007"
       return 0
     fi
   done
-  print "subtitle server: started but :43007 never opened — run 'subs' to see why"
+  print "subtitle server: :43007 not open after 120s — check 'subs-status' FIRST."
+  print "  Running? then it is still loading; wait. Not running? 'subs' shows the error."
+  print "  Do not run 'subs' while one is running — the port is taken and it will abort."
   return 1
 }
 
