@@ -2,8 +2,9 @@
 Type=Application
 Name=Affinity
 Comment=Photo, vector and layout editor
-Exec=/home/rdio/Applications/Affinity-3-x86_64.AppImage
+Exec=/home/rdio/Applications/Affinity-3.3.1.4940-x86_64-optimized.AppImage
 Icon=affinity
 Categories=Graphics;2DGraphics;RasterGraphics;VectorGraphics;
 Terminal=false
 StartupNotify=true
+StartupWMClass=affinity.exe
